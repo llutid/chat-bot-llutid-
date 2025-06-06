@@ -4,41 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot Asistente Virtual Llutid+</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* Estilos generales */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212; /* Fondo oscuro */
+            font-family: 'Poppins', sans-serif; /* Fuente más moderna */
+            background-color: #0d1117; /* Fondo ultra oscuro, similar a GitHub dark */
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden;
+            overflow: hidden; /* Oculta el scrollbar principal del body */
+            color: #c9d1d9; /* Color de texto general claro */
         }
         .chat-container {
-            width: 450px;
-            height: 600px;
-            background-color: #1e1e1e; /* Fondo del chat un poco más claro que el body */
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada para contraste */
+            width: 450px; /* Ancho fijo para escritorio */
+            height: 650px; /* Altura fija para escritorio */
+            background-color: #161b22; /* Fondo del chat un poco más claro que el body */
+            border-radius: 15px; /* Bordes más suaves */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); /* Sombra más pronunciada y oscura */
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #333; /* Borde sutil */
+            border: 1px solid #30363d; /* Borde sutil y oscuro */
+            animation: fadeIn 0.5s ease-out; /* Animación de entrada */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Encabezado del Chat */
         .chat-header {
-            background-color: #007bff; /* Azul vibrante */
+            background-color: #2188ff; /* Azul vibrante, ligeramente más oscuro para contraste */
             color: white;
-            padding: 18px 20px;
+            padding: 20px 25px; /* Más padding */
             text-align: center;
-            font-size: 1.4em;
-            font-weight: 600;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 1.6em; /* Más grande */
+            font-weight: 700; /* Más grueso */
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); /* Sombra más suave */
+            position: relative;
+            z-index: 10; /* Asegura que la sombra se vea */
         }
 
         /* Caja de Mensajes */
@@ -46,27 +56,55 @@
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
-            background-color: #2c2c2c; /* Fondo de los mensajes */
-            border-bottom: 1px solid #3a3a3a;
+            background-color: #24292e; /* Fondo de los mensajes más oscuro */
+            border-bottom: 1px solid #30363d;
             display: flex;
             flex-direction: column;
+            gap: 12px; /* Espacio entre mensajes */
+            scroll-behavior: smooth; /* Desplazamiento suave */
         }
+
+        /* Estilo de la barra de desplazamiento (para navegadores WebKit como Chrome/Safari) */
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: #24292e; /* Fondo de la barra de desplazamiento */
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: #555; /* Color del "pulgar" de la barra de desplazamiento */
+            border-radius: 10px;
+            border: 2px solid #24292e;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background-color: #777;
+        }
+
         .message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 18px;
-            max-width: 85%;
+            padding: 12px 18px; /* Más padding */
+            border-radius: 20px; /* Bordes más redondeados */
+            max-width: 80%; /* Un poco más estrecho */
             word-wrap: break-word;
-            line-height: 1.4;
-            font-size: 0.95em;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+            line-height: 1.5;
+            font-size: 0.98em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            animation: messagePop 0.3s ease-out; /* Animación para cada mensaje */
         }
+
+        @keyframes messagePop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         .message.user {
             background-color: #007bff; /* Azul para mensajes de usuario */
             color: white;
             align-self: flex-end;
             margin-left: auto;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 8px; /* Esquina menos redondeada en un lado */
         }
         .message.bot {
             background-color: #3a3a3a; /* Gris oscuro para mensajes del bot */
@@ -74,7 +112,7 @@
             align-self: flex-start;
             margin-right: auto;
             border: 1px solid #4a4a4a;
-            border-bottom-left-radius: 4px;
+            border-bottom-left-radius: 8px; /* Esquina menos redondeada en un lado */
         }
         .message.system { /* Mensajes del sistema, como "escribiendo..." */
             font-style: italic;
@@ -83,21 +121,24 @@
             align-self: center;
             background: none;
             box-shadow: none;
-            padding: 5px 0;
+            padding: 8px 0;
             margin: 0;
-            font-size: 0.85em;
+            font-size: 0.88em;
+            animation: fadeIn 0.4s ease-out;
         }
         .message.code-display {
-            background-color: #5a5a5a; /* Un color suave para el código */
-            color: #ffcc00; /* Color distintivo para el texto del código (amarillo/naranja) */
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
+            background-color: #2d3640; /* Un color suave para el código */
+            color: #a4ddff; /* Color distintivo para el texto del código (azul claro) */
+            font-family: 'Fira Code', 'Courier New', Courier, monospace; /* Fuente de código */
+            font-weight: 600;
             text-align: center;
-            padding: 12px 18px;
-            border-radius: 8px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border: 1px dashed #777;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border: 1px dashed #6a737d; /* Borde más visible */
+            letter-spacing: 1px; /* Espaciado entre letras */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
         .message ul {
             list-style: none;
@@ -105,60 +146,177 @@
             margin: 5px 0;
         }
         .message ul li {
-            margin-bottom: 5px;
+            margin-bottom: 7px; /* Más espacio */
+            line-height: 1.6;
         }
         .message ul li strong {
-            color: #4CAF50; /* Verde para destacar */
+            color: #58a6ff; /* Azul más claro para destacar */
         }
         .message a {
             color: #87CEEB; /* Azul claro para enlaces */
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.2s ease;
         }
         .message a:hover {
+            color: #58a6ff; /* Cambia de color al pasar el mouse */
             text-decoration: underline;
         }
+
+        /* Botón de WhatsApp más llamativo */
+        .whatsapp-button {
+            display: inline-block;
+            background-color: #25d366; /* Verde WhatsApp */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05em;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #1da851; /* Verde más oscuro al pasar el mouse */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .whatsapp-button:active {
+            transform: translateY(0);
+        }
+
+        .whatsapp-button::before {
+            content: '📞'; /* Icono de teléfono o WhatsApp */
+            font-size: 1.2em;
+        }
+
 
         /* Contenedor de Entrada */
         .input-container {
             display: flex;
             padding: 15px 20px;
-            border-top: 1px solid #3a3a3a;
-            background-color: #1e1e1e;
+            border-top: 1px solid #30363d;
+            background-color: #161b22;
+            gap: 10px; /* Espacio entre input y botón */
         }
         .input-container input {
             flex-grow: 1;
-            padding: 12px 18px;
+            padding: 14px 20px; /* Más padding */
             border: 1px solid #555;
-            border-radius: 25px;
-            margin-right: 12px;
-            font-size: 1em;
+            border-radius: 30px; /* Más redondeado */
+            font-size: 1.05em; /* Un poco más grande */
             background-color: #333; /* Fondo del input oscuro */
             color: white; /* Texto del input blanco */
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .input-container input:focus {
             outline: none;
             border-color: #007bff; /* Borde azul al enfocar */
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.4); /* Sombra al enfocar */
+            background-color: #2b2b2b; /* Ligeramente más claro al enfocar */
         }
         .input-container button {
             background-color: #007bff; /* Azul para el botón */
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 14px 25px; /* Más padding */
+            border-radius: 30px; /* Más redondeado */
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.05em;
             font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
         }
         .input-container button:hover {
             background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
             transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         .input-container button:active {
             transform: translateY(0);
+        }
+
+        /* --- MEDIA QUERIES PARA ADAPTACIÓN MÓVIL --- */
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start; /* Alinea arriba en móvil */
+                min-height: auto; /* Permite que el body se ajuste */
+                padding: 0;
+            }
+
+            .chat-container {
+                width: 100%; /* Ancho completo en móvil */
+                height: 100vh; /* Altura completa de la pantalla */
+                max-width: 100%; /* Asegura que no se desborde */
+                border-radius: 0; /* Sin bordes redondeados en los extremos para ocupar toda la pantalla */
+                box-shadow: none; /* Elimina la sombra para un aspecto más nativo */
+                border: none; /* Sin borde en móvil */
+            }
+
+            .chat-header {
+                font-size: 1.4em; /* Tamaño de fuente ligeramente más pequeño */
+                padding: 18px 20px;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
+
+            .chat-box {
+                padding: 15px; /* Menos padding */
+                gap: 10px; /* Menos espacio entre mensajes */
+            }
+
+            .message {
+                padding: 10px 15px; /* Más pequeño */
+                font-size: 0.95em; /* Texto ligeramente más pequeño */
+                max-width: 90%; /* Ocupa más ancho en móvil */
+            }
+
+            .input-container {
+                padding: 10px 15px; /* Menos padding */
+                gap: 8px; /* Menos espacio entre input y botón */
+            }
+
+            .input-container input {
+                padding: 12px 18px; /* Menos padding */
+                font-size: 1em;
+            }
+
+            .input-container button {
+                padding: 12px 20px; /* Menos padding */
+                font-size: 1em;
+            }
+
+            .whatsapp-button {
+                padding: 10px 20px;
+                font-size: 0.95em;
+                margin-top: 10px;
+            }
+        }
+
+        /* Ajustes adicionales para pantallas muy pequeñas (ej. iPhone 5/SE) */
+        @media (max-width: 360px) {
+            .chat-header {
+                font-size: 1.3em;
+                padding: 15px;
+            }
+            .chat-box {
+                padding: 10px;
+            }
+            .message {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+            .input-container input,
+            .input-container button {
+                font-size: 0.9em;
+                padding: 10px 15px;
+            }
         }
     </style>
 </head>
@@ -208,10 +366,10 @@
         const LLUTID_SUPPORT_PHONE = '+573181087834'; // Línea telefónica de Llutid
         const LLUTID_SUPPORT_EMAIL = 'llutidoficial@gmail.com'; // Correo electrónico oficial de Llutid
         // --- URLs de ejemplo (reemplaza con las URLs reales de tu sitio web) ---
-        const LLUTID_REGISTER_URL = 'https://www.llutid.com/registro'; 
-        const LLUTID_ABOUT_URL = 'https://www.llutid.com/quienes-somos'; 
-        const LLUTID_PLANS_URL = 'https://www.llutid.com/planes'; 
-        const LLUTID_HELP_URL = 'https://www.llutid.com/ayuda'; 
+        const LLUTID_REGISTER_URL = 'https://www.llutid.com/registro';
+        const LLUTID_ABOUT_URL = 'https://www.llutid.com/quienes-somos';
+        const LLUTID_PLANS_URL = 'https://www.llutid.com/planes';
+        const LLUTID_HELP_URL = 'https://www.llutid.com/ayuda';
 
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', function(e) {
@@ -228,13 +386,13 @@
                 messageDiv.classList.add(className);
             }
             // Usa innerHTML si el texto contiene etiquetas HTML (como listas, negritas, enlaces)
-            if (sender === 'bot' && (text.includes('<ul>') || text.includes('<a href=') || text.includes('<p>') || text.includes('<strong>'))) {
+            if (sender === 'bot' && (text.includes('<ul>') || text.includes('<a href=') || text.includes('<p>') || text.includes('<strong>') || text.includes('<div>'))) { // Añadido <div> para elementos como el botón de WhatsApp
                 messageDiv.innerHTML = text;
             } else {
                 messageDiv.textContent = text;
             }
             chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollTop + 20; // Scroll ligeramente para que se vea
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll al final
         }
 
         // Función para mostrar el indicador de "escribiendo..."
@@ -244,7 +402,7 @@
             typingDiv.id = 'typing-indicator';
             typingDiv.textContent = 'El asistente está escribiendo...';
             chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
         }
 
         // Función para remover el indicador de "escribiendo..."
@@ -268,18 +426,17 @@
 
         // Muestra el mensaje de bienvenida inicial
         function displayInitialWelcomeMessage() {
-            appendMessage('¡Hola! Soy tu asistente virtual de Llutid+.', 'bot');
+            appendMessage('¡Hola! 👋 Soy tu asistente virtual de Llutid+.', 'bot');
             appendMessage('Estoy aquí para ayudarte con cualquier consulta o problema que tengas. Escribe **"Hola"** o un saludo para comenzar.', 'bot');
         }
 
         // Muestra el menú de opciones (principal)
-        async function showMenu() {
-            // Solo muestra el mensaje "¡Excelente! ¿En qué puedo ayudarte hoy?" la primera vez que se accede al menú principal.
-            if (conversationState !== 'initial_menu') { 
-                appendMessage('¡Excelente! ¿En qué puedo ayudarte hoy?', 'bot');
+        async function showMenu(fromReturn = false) { // fromReturn para controlar el mensaje inicial
+            if (!fromReturn) { // Solo muestra este mensaje si no viene de una opción de "volver"
+                appendMessage('¡Excelente! ¿En qué puedo ayudarte hoy? ✨', 'bot');
                 await new Promise(resolve => setTimeout(resolve, 800));
             }
-            
+
             const menuHtml = `
                 <p>Por favor, selecciona una de las siguientes opciones ingresando el **número** correspondiente:</p>
                 <ul>
@@ -291,7 +448,7 @@
                     <li><strong>6.</strong> Hablar con un asesor.</li>
                     <li><strong>7.</strong> Cancelación de cuenta.</li>
                 </ul>
-                <p>Si en algún momento quieres volver a este menú, simplemente escribe **"Menú"**.</p>
+                <p>Si en algún momento quieres volver a este menú, simplemente escribe **"Menú"** o el **número 0**.</p>
             `;
             appendMessage(menuHtml, 'bot');
             conversationState = 'initial_menu'; // Establece el estado para esperar la selección del menú
@@ -311,20 +468,12 @@
             let botResponse = '';
             const normalizedMessage = message.toLowerCase();
 
-            // Manejo global de "Menú" (para volver al menú principal)
-            if (normalizedMessage === 'menu' && conversationState !== 'initial_menu') {
+            // Manejo global de "Menú" o "0" (para volver al menú principal)
+            if (normalizedMessage === 'menu' || normalizedMessage === '0') {
                 removeTypingIndicator();
-                await showMenu();
+                await showMenu(true); // Pasar true para evitar el mensaje de "Excelente..." repetitivo
                 return;
             }
-
-            // Manejo global de "0" (para volver al menú anterior, excepto en awaiting_greeting y initial_menu)
-            if (normalizedMessage === '0' && conversationState !== 'awaiting_greeting' && conversationState !== 'initial_menu') {
-                removeTypingIndicator();
-                await showMenu(); // Para simplificar, "0" siempre regresa al menú principal
-                return;
-            }
-
 
             switch (conversationState) {
                 case 'awaiting_greeting':
@@ -333,7 +482,7 @@
                         await showMenu();
                         return;
                     } else {
-                        botResponse = 'Para iniciar, por favor, escribe **"Hola"** o un saludo. Estoy listo para ayudarte.';
+                        botResponse = 'Para iniciar nuestra conversación, por favor, escribe **"Hola"** o un saludo. ¡Estoy aquí para asistirte con gusto! 😊';
                     }
                     break;
                 case 'initial_menu':
@@ -360,9 +509,6 @@
                 case 'new_account_phone':
                     botResponse = await handleNewAccountPhone(message);
                     break;
-                case 'about_llutid_expanded':
-                    botResponse = await handleAboutLlutidExpanded(message);
-                    break;
                 case 'faq_section_expanded':
                     botResponse = await handleFAQSectionExpanded(message);
                     break;
@@ -373,7 +519,7 @@
                     botResponse = await handleConfirmSendFeedback(message);
                     break;
                 default:
-                    botResponse = 'Lo siento, no entendí tu solicitud. Por favor, selecciona una opción del menú o escribe **"Menú"** para ver las opciones principales.';
+                    botResponse = 'Lo siento, no pude entender tu solicitud en este momento. Por favor, selecciona una opción del menú principal escribiendo el número correspondiente, o escribe **"Menú"** o el **"0"** para ver todas las opciones disponibles. 🤔';
                     break;
             }
             removeTypingIndicator();
@@ -391,43 +537,42 @@
                     conversationState = 'sub_menu_1';
                     response = `
                         <p>Has seleccionado la opción **"Problemas con mi cuenta o al iniciar sesión"**.</p>
-                        <p>Por favor, elige la opción que mejor describe tu situación ingresando el **número** correspondiente:</p>
+                        <p>Para poder ayudarte de la mejor manera, por favor, elige la opción que mejor describe tu situación ingresando el **número** correspondiente:</p>
                         <ul>
                             <li><strong>1.</strong> Se me olvidó la contraseña / PIN.</li>
                             <li><strong>2.</strong> Quiero cambiar mi correo electrónico.</li>
                             <li><strong>3.</strong> No puedo ingresar a mi cuenta / No funciona el login.</li>
                             <li><strong>4.</strong> Otro problema con mi cuenta.</li>
-                            <li><strong>0.</strong> Volver al menú anterior.</li>
                         </ul>
+                        <p>Recuerda que en cualquier momento puedes escribir **"0"** para volver al menú principal. 🔙</p>
                     `;
                     break;
                 case '2':
                     currentRequestType = 'new_account_request';
                     conversationState = 'new_account_name';
                     newAccountData = { fullName: '', email: '', phoneNumber: '' }; // Reiniciar datos
-                    response = '¡Excelente! Para ayudarte a crear tu cuenta en Llutid+, por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS NI ACENTOS**. Puedes escribir **0** para volver al menú anterior.';
+                    response = '¡Excelente decisión! 🎉 Para ayudarte a iniciar tu proceso de registro en Llutid+, por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS NI ACENTOS**. Por ejemplo: **JUAN PEREZ GOMEZ**. Puedes escribir **0** para volver al menú anterior si lo necesitas.';
                     break;
                 case '3':
                     response = `
-                        <p>¡Llutid+ es tu destino definitivo para el entretenimiento digital!</p>
-                        <p>Somos una **plataforma de streaming** que te ofrece una **amplia variedad de películas y transmisiones en vivo**, desde los últimos estrenos hasta tus clásicos favoritos. Nuestro objetivo es brindarte una experiencia inigualable con **beneficios muy económicos**, ¡planes desde solo **2.500 COP** para una sola persona!</p>
-                        <p>Nos enorgullece ser una plataforma **fácil de usar y profesional**, siempre manteniéndote informado de todas las novedades. Contamos con un **servicio de soporte dedicado** para resolver cualquier duda y asegurarnos de que disfrutes de tu contenido sin interrupciones.</p>
-                        <p>¡Sumérgete en un mundo de entretenimiento con Llutid+ y descubre la diversión sin límites!</p>
-                        <p>Puedes escribir **"Menú"** para volver al menú principal.</p>
+                        <p>¡Llutid+ es tu destino definitivo para el entretenimiento digital! 🎬🎮</p>
+                        <p>Somos una **plataforma de streaming** que te ofrece una **amplia y emocionante variedad de películas, series y transmisiones en vivo**, desde los últimos estrenos hasta tus clásicos favoritos. Nuestro objetivo es brindarte una experiencia inigualable con **beneficios muy económicos**, ¡contamos con planes desde solo **2.500 COP** para una sola persona, y paquetes familiares muy convenientes!</p>
+                        <p>Nos enorgullece ser una plataforma **intuitiva, fácil de usar y altamente profesional**, siempre manteniéndote informado de todas las novedades y actualizaciones. Contamos con un **servicio de soporte dedicado y siempre disponible** para resolver cualquier duda y asegurarnos de que disfrutes de tu contenido sin interrupciones.</p>
+                        <p>¡Sumérgete en un mundo de entretenimiento sin límites con Llutid+ y descubre la diversión que te espera! ✨</p>
+                        <p>Si deseas explorar más, puedes visitar nuestra sección "<a href="${LLUTID_ABOUT_URL}" target="_blank">Quiénes Somos</a>" en nuestra página web, o escribe **"Menú"** o **"0"** para volver a las opciones principales.</p>
                     `;
                     break;
                 case '4':
                     response = `
-                        <p>Has seleccionado **"Preguntas Frecuentes"**. Aquí tienes algunas de las consultas más comunes que recibimos:</p>
+                        <p>Has seleccionado **"Preguntas Frecuentes"** (FAQ). Aquí tienes algunas de las consultas más comunes que recibimos de nuestros usuarios: 🤔</p>
                         <ul>
-                            <li><strong>1.</strong> ¿Qué contenido ofrece Llutid+?</li>
-                            <li><strong>2.</strong> ¿Cuáles son los planes y precios de Llutid+?</li>
-                            <li><strong>3.</strong> ¿Cómo puedo contactar al equipo de soporte técnico?</li>
+                            <li><strong>1.</strong> ¿Qué tipo de contenido puedo encontrar en Llutid+?</li>
+                            <li><strong>2.</strong> ¿Cuáles son los planes de suscripción y precios disponibles?</li>
+                            <li><strong>3.</strong> ¿Cómo puedo contactar al equipo de soporte técnico de Llutid+?</li>
                             <li><strong>4.</strong> ¿Cuál es el horario de atención al cliente?</li>
-                            <li><strong>5.</strong> ¿Llutid+ ofrece pruebas gratuitas o descuentos?</li>
-                            <li><strong>0.</strong> Volver al menú anterior.</li>
+                            <li><strong>5.</strong> ¿Llutid+ ofrece pruebas gratuitas o descuentos especiales?</li>
                         </ul>
-                        <p>Por favor, escribe el **número de la pregunta** que te interesa para obtener más detalles, o el **0** para volver.</p>
+                        <p>Por favor, escribe el **número de la pregunta** que te interesa para obtener una respuesta detallada, o el **0** para volver al menú principal. ↩️</p>
                     `;
                     conversationState = 'faq_section_expanded';
                     break;
@@ -435,9 +580,9 @@
                     currentRequestType = 'support_feedback';
                     conversationState = 'awaiting_user_feedback';
                     response = `
-                        <p>En Llutid+, es muy importante para nosotros **escuchar a nuestros usuarios**.</p>
-                        <p>Por favor, **describe tu problema, queja o sugerencia en un solo mensaje de texto**. Sé lo más específico posible para que podamos entenderte mejor. Cuando termines, envíalo.</p>
-                        <p>Puedes escribir **0** para volver al menú anterior.</p>
+                        <p>En Llutid+, tu opinión es muy importante para nosotros y nos ayuda a mejorar. ¡Gracias por querer compartirla! 🙏</p>
+                        <p>Por favor, **describe tu problema, queja o sugerencia en un solo mensaje de texto**. Sé lo más claro y específico posible para que podamos entenderte perfectamente. Cuando termines de escribir, simplemente envíalo.</p>
+                        <p>Si cambias de opinión, puedes escribir **0** para volver al menú anterior.</p>
                     `;
                     break;
                 case '6':
@@ -445,18 +590,18 @@
                     break;
                 case '7':
                     response = `
-                        <p>Comprendo tu solicitud de cancelación de cuenta. Para asegurar la **seguridad y privacidad de tus datos**, este proceso requiere una verificación directa y personalizada.</p>
-                        <p>Por favor, contacta a nuestro equipo de soporte para que puedan asistirte de manera segura con la cancelación. Estamos disponibles en:</p>
+                        <p>Comprendo tu solicitud de cancelación de cuenta. En Llutid+, la **seguridad y privacidad de tus datos** son nuestra prioridad máxima. Por esta razón, el proceso de cancelación de cuenta requiere una verificación directa y personalizada con nuestro equipo.</p>
+                        <p>Para asegurar que tu cuenta sea cancelada de manera segura y conforme a nuestros protocolos, por favor, contacta a nuestro equipo de soporte. Ellos te guiarán a través de los pasos necesarios.</p>
+                        <p>Estamos disponibles en:</p>
                         <ul>
-                            <li><strong>Línea Telefónica:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a></li>
-                            <li><strong>Correo Electrónico:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a></li>
+                            <li><strong>Línea Telefónica de Soporte Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> (Horario de atención: Lunes a Viernes, 9 AM - 6 PM, Hora Colombia).</li>
+                            <li><strong>Correo Electrónico Oficial:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> (Responderemos en menos de 24 horas hábiles).</li>
                         </ul>
-                        <p>Nuestro equipo te guiará a través de los pasos necesarios para la cancelación. Agradecemos tu comprensión.</p>
-                        <p>Si deseas volver al menú principal, escribe **"Menú"**.</p>
+                        <p>Agradecemos tu comprensión y paciencia. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
                     `;
                     break;
                 default:
-                    response = 'Opción no válida. Por favor, selecciona un **número del 1 al 7** del menú, o escribe **"Menú"** si quieres volver al inicio.';
+                    response = '¡Ups! Parece que no seleccionaste una opción válida. Por favor, elige un **número del 1 al 7** del menú principal. O si prefieres, escribe **"Menú"** o el **"0"** para que te muestre las opciones nuevamente. 😉';
                     break;
             }
             return response;
@@ -470,27 +615,32 @@
                 case '1': // Se me olvidó la contraseña / PIN.
                     currentRequestType = 'restablecimiento de contraseña/PIN';
                     conversationState = 'awaiting_full_name';
-                    response = 'Para ayudarte a restablecer tu contraseña/PIN, necesito verificar tu identidad. Por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**. Ejemplo: **JUAN PEREZ GOMEZ**. Puedes escribir **0** para volver al menú anterior.';
+                    response = 'Para ayudarte a restablecer tu contraseña o PIN, necesito verificar tu identidad. Por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, tal como lo registraste en tu cuenta. Ejemplo: **JUAN PEREZ GOMEZ**. Puedes escribir **0** para volver al menú principal si lo deseas. 🔐';
                     break;
                 case '2': // Quiero cambiar mi correo electrónico.
                     currentRequestType = 'cambio de correo electrónico';
                     conversationState = 'awaiting_full_name';
-                    response = 'Para proceder con el cambio de tu correo electrónico, necesito que me digas tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, tal como está registrado. Ejemplo: **MARIA LOPEZ GARCIA**. Puedes escribir **0** para volver al menú anterior.';
+                    response = 'Comprendo. Para proceder con el cambio de tu correo electrónico asociado a tu cuenta de Llutid+, necesito que me digas tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, para que podamos verificar tu identidad. Ejemplo: **MARIA LOPEZ GARCIA**. Puedes escribir **0** para volver al menú principal. 📧';
                     break;
                 case '3': // No puedo ingresar a mi cuenta / No funciona el login.
                     currentRequestType = 'problema al iniciar sesión';
                     conversationState = 'awaiting_full_name';
-                    response = 'Comprendo. Para investigar el problema al iniciar sesión, por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, para que podamos verificar tu cuenta. Ejemplo: **CARLOS RODRIGUEZ SANCHEZ**. Puedes escribir **0** para volver al menú anterior.';
+                    response = 'Lamento que estés teniendo problemas para iniciar sesión. Para investigar y ayudarte con este inconveniente, por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, tal como aparece en tu cuenta de Llutid+. Ejemplo: **CARLOS RODRIGUEZ SANCHEZ**. Puedes escribir **0** para volver al menú principal. ❌';
                     break;
                 case '4': // Otro problema con mi cuenta.
                     response = `
-                        <p>Para **otros problemas relacionados con tu cuenta**, te recomendamos contactar directamente a nuestro equipo de soporte para una atención personalizada y más específica.</p>
-                        <p>Puedes llamarnos a la **Línea Telefónica Llutid+**: <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> o escribirnos a nuestro **Correo Electrónico**: <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a>.</p>
-                        <p>Si deseas volver al menú principal, escribe **"Menú"**.</p>
+                        <p>Para **otros problemas específicos relacionados con tu cuenta** que no se encuentran en las opciones anteriores, te recomendamos encarecidamente contactar directamente a nuestro equipo de soporte técnico. Ellos te proporcionarán una atención personalizada y eficiente para tu caso particular.</p>
+                        <p>Puedes comunicarte con nosotros a través de:</p>
+                        <ul>
+                            <li><strong>Línea Telefónica Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a></li>
+                            <li><strong>Correo Electrónico Oficial:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a></li>
+                        </ul>
+                        <p>Estamos listos para asistirte. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
                     `;
+                    conversationState = 'initial_menu'; // Vuelve al menú principal
                     break;
                 default:
-                    response = 'Opción no válida. Por favor, selecciona un **número del 1 al 4**, o el **0** para volver al menú anterior.';
+                    response = '¡Vaya! Esa opción no es válida para esta sección. Por favor, selecciona un **número del 1 al 4**, o el **0** para volver al menú principal. 🤔';
                     break;
             }
             return response;
@@ -498,51 +648,52 @@
 
         // --- Flujo de Registro Llutid+ ---
         async function handleNewAccountName(fullName) {
-            const cleanedFullName = fullName.toUpperCase().replace(/[^A-Z\s]/g, '');
-            if (cleanedFullName.length < 5) { // Simple validación de longitud
-                return 'El nombre completo es demasiado corto. Por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS** (mínimo 5 caracteres). Puedes escribir **0** para volver al menú anterior.';
+            const cleanedFullName = fullName.toUpperCase().replace(/[^A-Z\s]/g, '').trim(); // Eliminar caracteres no alfabéticos y espacios extra
+            if (cleanedFullName.length < 5) {
+                return 'El nombre completo que ingresaste es demasiado corto o contiene caracteres no válidos. Por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS NI ACENTOS** (mínimo 5 caracteres alfabéticos). Puedes escribir **0** para volver al menú anterior. 📝';
             }
             newAccountData.fullName = cleanedFullName;
             conversationState = 'new_account_email';
-            return `¡Gracias, **${newAccountData.fullName}**! Ahora, por favor, ingresa tu **correo electrónico** donde quieres recibir la información de tu cuenta. Puedes escribir **0** para volver al menú anterior.`;
+            return `¡Gracias, **${newAccountData.fullName}**! 👍 Ahora, por favor, ingresa el **correo electrónico válido** donde quieres recibir toda la información y notificaciones importantes de tu nueva cuenta Llutid+. Puedes escribir **0** para volver al menú anterior.`;
         }
 
         async function handleNewAccountEmail(email) {
-            // Simple validación de email (básico)
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                return 'El formato del correo electrónico no es válido. Por favor, ingresa un correo electrónico real. Puedes escribir **0** para volver al menú anterior.';
+                return 'El formato del correo electrónico que ingresaste no es válido. Por favor, asegúrate de escribir un correo electrónico real y correcto (ejemplo: tu_correo@dominio.com). Puedes escribir **0** para volver al menú anterior. 📧';
             }
             newAccountData.email = email;
             conversationState = 'new_account_phone';
-            return `¡Perfecto! Finalmente, ingresa tu **número de celular** (solo números) para completar tu información de registro. Puedes escribir **0** para volver al menú anterior.`;
+            return `¡Excelente! Finalmente, ingresa tu **número de celular** (solo los 10 dígitos, sin espacios ni guiones) para completar la información inicial de tu registro. Este número será clave para cualquier comunicación. Puedes escribir **0** para volver al menú anterior. 📱`;
         }
 
         async function handleNewAccountPhone(phoneNumber) {
             const cleanPhoneNumber = phoneNumber.replace(/\D/g, ''); // Remover no-dígitos
-            if (cleanPhoneNumber.length < 7 || cleanPhoneNumber.length > 10) { // Validación básica de longitud para Colombia
-                return 'El número de celular no es válido. Por favor, ingresa un número de 7 a 10 dígitos. Puedes escribir **0** para volver al menú anterior.';
+            if (cleanPhoneNumber.length !== 10) { // Validación estricta de 10 dígitos para Colombia (ej: 3XX XXX XXXX)
+                return 'El número de celular no es válido. Por favor, ingresa un número de 10 dígitos (ejemplo: 3101234567). Puedes escribir **0** para volver al menú anterior. 📞';
             }
             newAccountData.phoneNumber = cleanPhoneNumber;
-            
-            // Construir mensaje para WhatsApp
-            const whatsappMessage = `Hola Llutid+, soy ${newAccountData.fullName} y estoy interesado en crear una nueva cuenta. Mis datos son: %0A- Nombre Completo: ${newAccountData.fullName}%0A- Correo Electrónico: ${newAccountData.email}%0A- Número de Celular: ${newAccountData.phoneNumber}%0A%0APor favor, ayúdenme a iniciar el proceso de registro.`;
+
+            const whatsappMessage = `Hola Llutid+, soy ${newAccountData.fullName} y estoy muy interesado/a en crear una nueva cuenta. Mis datos de contacto son:%0A- Nombre Completo: ${newAccountData.fullName}%0A- Correo Electrónico: ${newAccountData.email}%0A- Número de Celular: ${newAccountData.phoneNumber}%0A%0APor favor, ayúdenme a iniciar el proceso de registro y a completar los pasos para activar mi cuenta. ¡Gracias!`;
             const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
 
             const response = `
-                <p>¡Gracias por tu interés en Llutid+! Hemos recopilado tus datos:</p>
+                <p>¡Muchas gracias por tu interés en Llutid+! 🎉 Hemos recopilado tus datos iniciales para el registro:</p>
                 <ul>
-                    <li><strong>Nombre:</strong> ${newAccountData.fullName}</li>
-                    <li><strong>Correo:</strong> ${newAccountData.email}</li>
-                    <li><strong>Celular:</strong> ${newAccountData.phoneNumber}</li>
+                    <li><strong>Nombre Completo:</strong> ${newAccountData.fullName}</li>
+                    <li><strong>Correo Electrónico:</strong> ${newAccountData.email}</li>
+                    <li><strong>Número de Celular:</strong> ${newAccountData.phoneNumber}</li>
                 </ul>
-                <p>Para la creación segura y personalizada de tu cuenta, es necesario que un **asesor te asista directamente**.</p>
-                <p>Ellos verificarán tu información y te guiarán a través de los pasos finales para activar tu cuenta y empezar a disfrutar de Llutid+.</p>
-                <p>Haz clic en el siguiente enlace para **contactar a un asesor por WhatsApp** y completar tu registro:</p>
-                <p><a href="${whatsappLink}" target="_blank"><strong>Contactar asesor de Llutid+ para mi cuenta</strong></a></p>
-                <p>¡Te esperamos en la familia Llutid+!</p>
+                <p>Para la creación segura y personalizada de tu cuenta, es necesario que un **asesor especializado te asista directamente**. Ellos verificarán tu información, resolverán cualquier duda adicional y te guiarán a través de los pasos finales para activar tu cuenta y empezar a disfrutar de todo el contenido de Llutid+.</p>
+                <p>Por favor, haz clic en el siguiente botón para **contactar a un asesor por WhatsApp** y completar tu registro de manera ágil y segura:</p>
+                <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                    <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+                        Chatear con un Asesor de Llutid+
+                    </a>
+                </div>
+                <p>¡Estamos emocionados de darte la bienvenida a la familia Llutid+! 🚀</p>
             `;
-            
+
             conversationState = 'initial_menu'; // Volver al menú principal
             appendMessage(response, 'bot');
             return ''; // No retornar nada aquí para evitar un mensaje duplicado
@@ -550,20 +701,20 @@
         // --- Fin Flujo de Registro Llutid+ ---
 
         async function handleFullName(fullName) {
-            const cleanedFullName = fullName.toUpperCase().replace(/[^A-Z\s]/g, '');
+            const cleanedFullName = fullName.toUpperCase().replace(/[^A-Z\s]/g, '').trim();
             currentUser = usersDB.find(user => user.fullName === cleanedFullName);
 
             if (currentUser) {
                 conversationState = 'awaiting_phone_number';
-                return `¡Perfecto, **${currentUser.fullName}**! Ahora, por favor, ingresa tu **número de celular registrado** para confirmar tu identidad. Puedes escribir **0** para volver al menú anterior.`;
+                return `¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia. Ahora, para confirmar tu identidad, por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal.`;
             } else {
                 conversationState = 'initial_menu';
                 currentUser = null;
                 currentRequestType = '';
                 generatedCode = '';
-                appendMessage('<p>Lo siento, el nombre completo que ingresaste **no coincide con nuestros registros**. **Acceso denegado.**</p><p>Por favor, intenta nuevamente o selecciona otra opción del menú.</p>', 'bot');
+                appendMessage('<p>Lo siento mucho, el nombre completo que ingresaste **no coincide con ninguno de nuestros registros activos**. 😟 Por favor, verifica que lo hayas escrito exactamente como lo registraste (todo en mayúsculas, sin caracteres especiales).</p><p>Si el problema persiste, por favor, selecciona otra opción del menú, o intenta nuevamente.</p>', 'bot');
                 await new Promise(resolve => setTimeout(resolve, 1500));
-                await showMenu();
+                await showMenu(true);
                 return '';
             }
         }
@@ -574,88 +725,51 @@
             if (currentUser && currentUser.phoneNumber === cleanPhoneNumber) {
                 generatedCode = generateRandomCode();
                 conversationState = 'awaiting_security_code';
-                
-                appendMessage(`¡Identidad verificada! Para el paso final de seguridad, te enviaré un código único.`, 'bot');
+
+                appendMessage(`¡Identidad verificada exitosamente! 🎉 Para el paso final de seguridad de tu solicitud de **${currentRequestType}**, te enviaré un código único de verificación.`, 'bot');
                 await new Promise(resolve => setTimeout(resolve, 1200));
 
                 appendMessage(`Tu código de seguridad es:`, 'bot');
                 appendMessage(generatedCode, 'bot', 'code-display');
-                return `Por favor, ingresa este código tal cual te lo mostré para completar la verificación. Puedes escribir **0** para volver al menú anterior.`;
+                return `Por favor, ingresa este código **tal cual te lo mostré** para completar la verificación y avanzar con tu solicitud. Recuerda que puedes escribir **0** para volver al menú principal en cualquier momento.`;
             } else {
                 conversationState = 'initial_menu';
                 currentUser = null;
                 currentRequestType = '';
                 generatedCode = '';
-                appendMessage('<p>El número de celular ingresado **no coincide** con el usuario registrado. **Acceso denegado.**</p><p>Por favor, intenta nuevamente o selecciona otra opción del menú.</p>', 'bot');
+                appendMessage('<p>El número de celular ingresado **no coincide** con el número registrado para este usuario. 🚫 **Acceso denegado.**</p><p>Por favor, revisa tus datos y intenta nuevamente o selecciona otra opción del menú principal.</p>', 'bot');
                 await new Promise(resolve => setTimeout(resolve, 1500));
-                await showMenu();
+                await showMenu(true);
                 return '';
             }
         }
 
         async function handleSecurityCode(userCode) {
             if (userCode === generatedCode) {
-                const whatsappMessage = `Hola Llutid+, soy ${currentUser.fullName} (celular: ${currentUser.phoneNumber}) y estoy solicitando ayuda con mi ${currentRequestType}. Mi código de verificación fue: ${generatedCode}.`;
+                const whatsappMessage = `Hola Llutid+, soy ${currentUser.fullName} (celular: ${currentUser.phoneNumber}) y mi código de verificación (${generatedCode}) fue exitoso. Necesito ayuda con mi solicitud de ${currentRequestType}. Por favor, asístanme.`;
                 const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
 
                 const response = `
                     <p>¡Verificación exitosa! ✅ Tu solicitud de **${currentRequestType}** ha sido validada de forma segura.</p>
-                    <p>Para tu seguridad y una atención personalizada, te pondremos en contacto directo con uno de nuestros **asesores expertos**.</p>
-                    <p>Ellos tienen las herramientas y la información necesaria para resolver tu caso de forma eficiente y confidencial.</p>
-                    <p>Haz clic en este enlace para **ir a WhatsApp** y serás atendido de inmediato:</p>
-                    <p><a href="${whatsappLink}" target="_blank"><strong>Chatear con un asesor de Llutid+</strong></a></p>
-                    <p>Por favor, ten paciencia, nuestros asesores te responderán lo antes posible. ¡Gracias por confiar en Llutid+!</p>
+                    <p>Para tu seguridad y una atención completamente personalizada, te pondremos en contacto directo con uno de nuestros **asesores expertos** de Llutid+.</p>
+                    <p>Ellos tienen las herramientas y la información necesaria para resolver tu caso de forma eficiente, confidencial y asegurando la integridad de tu cuenta. ¡Están listos para ayudarte!</p>
+                    <p>Haz clic en el siguiente botón para **chatear directamente con un asesor por WhatsApp** y serás atendido de inmediato:</p>
+                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+                            Chatear con un Asesor de Llutid+
+                        </a>
+                    </div>
+                    <p>Agradecemos tu paciencia y confianza. Si tienes otra consulta, no dudes en escribir **"Menú"** o el **"0"** para ver las opciones principales. ✨</p>
                 `;
-                
+                conversationState = 'initial_menu'; // Volver al menú principal
                 appendMessage(response, 'bot');
-                
-                currentUser = null;
-                currentRequestType = '';
-                generatedCode = '';
-                conversationState = 'initial_menu'; // Resetea el estado para futuras interacciones
-                return ''; 
+                return ''; // No retornar nada aquí para evitar un mensaje duplicado
             } else {
-                conversationState = 'initial_menu';
-                currentUser = null;
-                currentRequestType = '';
-                generatedCode = '';
-                appendMessage('<p>El código de seguridad ingresado es **incorrecto**. **Acceso denegado.**</p><p>Por tu seguridad, por favor, inicia el proceso nuevamente si lo deseas. Escribe **"Menú"** para comenzar de nuevo.</p>', 'bot');
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                await showMenu();
-                return '';
+                return 'El código ingresado no es correcto. 😔 Por favor, intenta de nuevo o escribe **0** para volver al menú principal.';
             }
         }
 
-        async function handleAboutLlutidExpanded(userMessage) {
-            userMessage = userMessage.toLowerCase();
-            let response = '';
-
-            if (userMessage.includes('más información sobre llutid') || userMessage.includes('expandir')) {
-                response = `
-                    <p>¡Claro! Permíteme contarte un poco más a fondo sobre Llutid+.</p>
-                    <p>En Llutid+, nos especializamos en ofrecer una **experiencia de entretenimiento sin igual**, con un enfoque en la calidad y la accesibilidad para todos. Nuestra plataforma está diseñada para ser tu centro de diversión y conocimiento, donde puedes **disfrutar de contenido ilimitado a tu propio ritmo**.</p>
-                    <p>Nuestra **visión** es [**ser la plataforma de streaming preferida por la comunidad, innovando constantemente y ofreciendo un valor excepcional a nuestros usuarios.**].</p>
-                    <p>Entre nuestros **pilares fundamentales** se encuentran:</p>
-                    <ul>
-                        <li>**Contenido Diverso y de Calidad:** Una biblioteca en constante crecimiento con algo para cada gusto.</li>
-                        <li>**Precios Accesibles:** Opciones de suscripción que se adaptan a tu presupuesto, desde solo 2.500 COP.</li>
-                        <li>**Experiencia de Usuario Intuitiva:** Navegación sencilla y un diseño que te invita a explorar.</li>
-                        <li>**Soporte Dedicado:** Siempre estamos aquí para ayudarte con cualquier consulta o problema.</li>
-                        <li>**Innovación Constante:** Nos mantenemos actualizados para ofrecerte las últimas características y el mejor rendimiento.</li>
-                    </ul>
-                    <p>Trabajamos día a día para [**simplificar tu acceso al entretenimiento de calidad, garantizando una plataforma estable, segura y siempre actualizada para tu disfrute.**].</p>
-                    <p>Si quieres conocer más a fondo nuestros valores y el equipo detrás de Llutid+, visita nuestra sección 'Quiénes Somos': <a href="${LLUTID_ABOUT_URL}" target="_blank"><strong>Conoce al equipo de Llutid+</strong></a>.</p>
-                    <p>Puedes escribir **"Menú"** para volver al menú principal.</p>
-                `;
-            } else if (userMessage.includes('menu') || userMessage.includes('inicio') || userMessage.includes('volver') || userMessage.includes('regresar') || userMessage.includes('otra cosa') || userMessage === '0') {
-                await showMenu();
-                return '';
-            } else {
-                response = 'Por favor, dime si quieres **"Más información sobre Llutid+"** o si quieres volver al **"Menú"** principal.';
-            }
-            return response;
-        }
-
+        // --- Manejo de Preguntas Frecuentes (FAQ) ---
         async function handleFAQSectionExpanded(userMessage) {
             const normalizedMessage = userMessage.trim();
             let response = '';
@@ -663,188 +777,164 @@
             switch (normalizedMessage) {
                 case '1':
                     response = `
-                        <p>En Llutid+, te ofrecemos una **amplia y emocionante variedad de contenido** para todos los gustos:</p>
+                        <p>En Llutid+, te ofrecemos un universo de entretenimiento: 🍿📺</p>
                         <ul>
-                            <li>**Películas:** Desde los últimos estrenos de Hollywood hasta cine independiente, documentales, y clásicos atemporales. Nuestra biblioteca se actualiza constantemente.</li>
-                            <li>**Series:** Temporadas completas de tus series favoritas, dramas, comedias, thrillers y más.</li>
-                            <li>**Eventos en Vivo:** Acceso a transmisiones en vivo de conciertos, eventos deportivos (ocasionalmente), conferencias y programas especiales.</li>
-                            <li>**Contenido Exclusivo:** Producciones originales de Llutid+ y contenido curado que solo encontrarás en nuestra plataforma.</li>
+                            <li>**Películas:** Una amplia biblioteca con los últimos estrenos y tus clásicos favoritos de diversos géneros.</li>
+                            <li>**Series:** Temporadas completas de las series del momento y producciones exclusivas para que hagas maratones sin parar.</li>
+                            <li>**Transmisiones en Vivo (Live Streaming):** Eventos especiales, conciertos, deportes y mucho más en tiempo real.</li>
                         </ul>
-                        <p>Siempre estamos trabajando para expandir nuestra oferta y traerte lo mejor del entretenimiento digital.</p>
-                        <p>Puedes escribir el **número de otra pregunta** que te interese, **0** para volver al menú anterior, o **"Menú"** para ir al principal.</p>
+                        <p>Siempre estamos actualizando nuestro catálogo para ofrecerte lo mejor. ¡Explora y encuentra tu próximo favorito!</p>
+                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
                     `;
                     break;
                 case '2':
                     response = `
-                        <p>Llutid+ se caracteriza por ofrecer **planes muy accesibles** para que todos puedan disfrutar del mejor entretenimiento. Nuestros precios varían según las necesidades, pero empiezan desde solo **2.500 COP** para una sola persona.</p>
-                        <p>Ofrecemos diferentes opciones de suscripción, incluyendo:</p>
+                        <p>¡Llutid+ se adapta a ti con planes muy económicos y flexibles! 💰</p>
                         <ul>
-                            <li>**Plan Individual:** Ideal para una persona, con acceso ilimitado a nuestra biblioteca.</li>
-                            <li>**Planes Familiares:** Para múltiples usuarios, con perfiles personalizados y visualización simultánea en varios dispositivos.</li>
-                            <li>**Paquetes Premium:** Con beneficios adicionales como mayor calidad de streaming (HD/4K), acceso anticipado a contenido o características exclusivas.</li>
+                            <li>**Plan Individual:** Desde **2.500 COP** (por persona). Ideal si quieres disfrutar solo.</li>
+                            <li>**Planes Familiares:** Opciones con múltiples perfiles y pantallas para que todos en casa disfruten. ¡Más económico por persona!</li>
                         </ul>
-                        <p>Te invitamos a visitar nuestra sección de **Planes y Precios** en la web para explorar todas las opciones y encontrar la que mejor se adapte a ti: <a href="${LLUTID_PLANS_URL}" target="_blank"><strong>Ver Planes y Precios de Llutid+</strong></a>.</p>
-                        <p>Puedes escribir el **número de otra pregunta** que te interese, **0** para volver al menú anterior, o **"Menú"** para ir al principal.</p>
+                        <p>Ofrecemos diferentes duraciones de suscripción (semanal, mensual, trimestral). Puedes consultar todos nuestros planes detallados y precios actualizados en nuestra página oficial: <a href="${LLUTID_PLANS_URL}" target="_blank">Ver Planes y Precios de Llutid+</a>.</p>
+                        <p>¡Te garantizamos una excelente relación calidad-precio!</p>
+                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
                     `;
                     break;
-                case '3': 
+                case '3':
                     response = `
-                        <p>¡Claro! Si necesitas contactar a nuestro equipo de **soporte técnico**, puedes hacerlo a través de:</p>
+                        <p>¡Estamos aquí para ayudarte! Nuestro equipo de soporte técnico en Llutid+ está disponible a través de varios canales: 🧑‍💻</p>
                         <ul>
-                            <li><strong>Línea Telefónica Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> (Atención de Lunes a Viernes).</li>
-                            <li><strong>Correo Electrónico:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> (Tiempo de respuesta: 24-48 horas hábiles).</li>
+                            <li>**WhatsApp Directo:** Envíanos un mensaje rápido a través de <a href="https://wa.me/${LLUTID_WHATSAPP_PHONE}" target="_blank">nuestra línea de WhatsApp</a>.</li>
+                            <li>**Línea Telefónica:** Llámanos a nuestra línea de soporte principal: <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a>.</li>
+                            <li>**Correo Electrónico:** Envíanos un email detallado a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a>.</li>
+                            <li>**Sección de Ayuda en la Web:** Visita nuestra sección de ayuda en el sitio web para encontrar guías y soluciones: <a href="${LLUTID_HELP_URL}" target="_blank">Centro de Ayuda Llutid+</a>.</li>
                         </ul>
-                        <p>También puedes visitar nuestro **Centro de Ayuda en línea** para encontrar recursos, guías y tutoriales que podrían resolver tu consulta de inmediato: <a href="${LLUTID_HELP_URL}" target="_blank"><strong>Visitar Centro de Ayuda Llutid+</strong></a>.</p>
-                        <p>Estamos aquí para ayudarte. ¿Hay algo más en FAQs que quieras saber?</p>
-                        <p>Puedes escribir el **número de otra pregunta** que te interese, **0** para volver al menú anterior, o **"Menú"** para ir al principal.</p>
+                        <p>¡Elige el canal que mejor se adapte a ti y con gusto te asistiremos!</p>
+                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
                     `;
                     break;
-                case '4': // Horario de atención al cliente (reutiliza la función del asesor)
-                    response = await getAdvisorAvailabilityMessage();
-                    response += `<p>Puedes escribir el **número de otra pregunta** que te interese, **0** para volver al menú anterior, o **"Menú"** para ir al principal.</p>`;
+                case '4':
+                    response = `
+                        <p>Nuestro horario de atención al cliente en Llutid+ es el siguiente: ⏰</p>
+                        <ul>
+                            <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia).</li>
+                            <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia).</li>
+                            <li>**Domingos y Festivos:** Cerrado.</li>
+                        </ul>
+                        <p>Fuera de este horario, puedes dejarnos un mensaje por correo electrónico o WhatsApp, y te responderemos a primera hora del siguiente día hábil. ¡Gracias por tu comprensión!</p>
+                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
+                    `;
                     break;
                 case '5':
                     response = `
-                        <p>En Llutid+, valoramos la oportunidad de que pruebes nuestra plataforma. Ocasionalmente, ofrecemos **pruebas gratuitas por tiempo limitado** o **descuentos especiales** en nuestros planes para nuevos usuarios o en promociones específicas.</p>
-                        <p>Te recomendamos estar atento a nuestra página web y redes sociales para no perderte ninguna oferta. Actualmente, puedes consultar nuestros planes y cualquier promoción vigente directamente en: <a href="${LLUTID_PLANS_URL}" target="_blank"><strong>Ver Planes y Promociones de Llutid+</strong></a>.</p>
-                        <p>¡Queremos que descubras todo lo que Llutid+ tiene para ofrecerte!</p>
-                        <p>Puedes escribir el **número de otra pregunta** que te interese, **0** para volver al menú anterior, o **"Menú"** para ir al principal.</p>
+                        <p>Actualmente, Llutid+ no ofrece pruebas gratuitas estándar. Sin embargo, tenemos una excelente noticia: ¡nuestros planes son tan económicos que puedes comenzar a disfrutar del entretenimiento desde solo **2.500 COP**!</p>
+                        <p>Ocasionalmente, lanzamos **promociones y descuentos especiales** para nuevos usuarios o en fechas específicas. Te recomendamos seguirnos en nuestras redes sociales y estar atento a nuestra página web para no perderte ninguna oferta. ¡Siempre hay algo emocionante esperándote! ✨</p>
+                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
                     `;
                     break;
                 default:
-                    response = 'Lo siento, esa no es una pregunta frecuente válida o una opción. Por favor, selecciona un **número del 1 al 5**, o el **0** para volver al menú anterior.';
+                    response = 'Lo siento, esa no es una pregunta frecuente válida. Por favor, selecciona un **número del 1 al 5** para ver la información, o escribe **0** para volver al menú principal. 🤔';
                     break;
             }
             return response;
         }
 
-        // --- Flujo de Soporte/Quejas/Sugerencias ---
-        async function handleUserFeedbackInput(feedbackText) {
-            userFeedback = feedbackText; // Guarda el texto del usuario
+        // --- Flujo de Soporte y Quejas ---
+        async function handleUserFeedbackInput(feedbackMessage) {
+            userFeedback = feedbackMessage.trim();
+            if (userFeedback.length < 10) { // Pequeña validación para evitar mensajes vacíos
+                return 'Tu mensaje parece demasiado corto. Por favor, describe tu problema o sugerencia con más detalle para que podamos ayudarte mejor. Si deseas volver al menú anterior, escribe **0**.';
+            }
             conversationState = 'confirm_send_feedback';
-            return `
-                <p>Has escrito lo siguiente:</p>
-                <div class="message bot code-display">${feedbackText}</div>
-                <p>¿Quieres enviar esta queja, problema o sugerencia a la empresa Llutid+?</p>
-                <ul>
-                    <li><strong>1.</strong> Sí, enviar.</li>
-                    <li><strong>0.</strong> No, volver al menú anterior (esto borrará el mensaje).</li>
-                </ul>
-                <p>Si no lo envías, la empresa no conocerá tu mensaje.</p>
-            `;
+            return `¡Gracias por tu valioso mensaje! Lo hemos recibido: "${userFeedback}".\n\n¿Estás seguro/a de que deseas enviar esta información a nuestro equipo de soporte? Por favor, responde **"Sí"** para confirmar o **"No"** para cancelarlo y volver a empezar. Puedes escribir **0** para volver al menú principal.`;
         }
 
         async function handleConfirmSendFeedback(confirmation) {
-            const normalizedConfirmation = confirmation.trim();
+            const normalizedConfirmation = confirmation.toLowerCase();
             let response = '';
 
-            if (normalizedConfirmation === '1') {
-                const whatsappMessage = `Hola Llutid+, tengo un mensaje de soporte/queja/sugerencia: %0A%0A"${userFeedback}"%0A%0APor favor, revisen esto.`;
+            if (normalizedConfirmation === 'si' || normalizedConfirmation === 'sí') {
+                // Aquí iría la lógica para enviar el feedback a un sistema (ej. email, base de datos)
+                // Por ahora, solo simulamos el envío y preparamos el enlace de WhatsApp
+                const whatsappMessage = `Hola Llutid+, tengo un problema/queja/sugerencia que quiero reportar:%0A%0A"${userFeedback}"%0A%0APor favor, ayúdenme con esto.`;
                 const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
-                
+
                 response = `
-                    <p>¡Mensaje enviado con éxito! Agradecemos tu valioso aporte.</p>
-                    <p>Haz clic en este enlace para **enviar el mensaje a la empresa por WhatsApp**:</p>
-                    <p><a href="${whatsappLink}" target="_blank"><strong>Enviar mensaje de soporte a Llutid+ por WhatsApp</strong></a></p>
-                    <p>Para Llutid+ es fundamental escuchar a nuestros usuarios y mejorar continuamente.</p>
-                    <p>Si necesitas hablar directamente con nosotros, aquí están nuestros canales de atención:</p>
-                    ${await getContactChannels()}
-                    <p>Si deseas volver al menú principal, escribe **"Menú"**.</p>
+                    <p>¡Excelente! Hemos registrado tu mensaje y te agradecemos por compartirlo. Tu opinión es fundamental para nosotros. 🙏</p>
+                    <p>Para asegurarnos de que tu problema, queja o sugerencia sea atendido de la manera más eficaz y que podamos recopilar cualquier detalle adicional si es necesario, te invitamos a **contactar directamente con un asesor de soporte a través de WhatsApp**.</p>
+                    <p>Esto nos permitirá dar seguimiento a tu caso de forma personalizada y ofrecerte la mejor solución.</p>
+                    <p>Haz clic en el siguiente botón para iniciar el chat con nuestro equipo:</p>
+                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+                            Chatear con Soporte de Llutid+
+                        </a>
+                    </div>
+                    <p>Agradecemos tu paciencia y cooperación. ¡Estamos aquí para escucharte y resolverlo!</p>
                 `;
-                userFeedback = ''; // Limpiar el feedback después de enviar
+                userFeedback = ''; // Limpiar el feedback
                 conversationState = 'initial_menu'; // Volver al menú principal
-            } else if (normalizedConfirmation === '0') {
-                response = '<p>Entendido, tu mensaje no ha sido enviado. Puedes empezar de nuevo si lo deseas.</p>';
-                userFeedback = ''; // Limpiar el feedback si el usuario decide no enviarlo
+                appendMessage(response, 'bot');
+                return ''; // No retornar nada aquí
+            } else if (normalizedConfirmation === 'no') {
+                userFeedback = ''; // Limpiar el feedback
                 conversationState = 'initial_menu'; // Volver al menú principal
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                await showMenu();
-                return ''; // No retornar nada aquí para evitar un mensaje duplicado
+                response = 'Entendido. Tu mensaje no ha sido enviado. ¿Hay algo más en lo que pueda ayudarte? Escribe **"Menú"** o el **"0"** para ver las opciones.';
             } else {
-                response = 'Opción no válida. Por favor, selecciona **1** para enviar o **0** para volver.';
+                return 'Lo siento, no entendí tu respuesta. Por favor, responde **"Sí"** para confirmar o **"No"** para cancelar. Puedes escribir **0** para volver al menú principal.';
             }
             return response;
         }
 
-        async function getContactChannels() {
-            const now = new Date();
-            const dayOfWeek = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-            const currentHour = now.getHours(); // 0-23
-            const currentMinute = now.getMinutes();
-
-            let channelsHtml = `
-                <p>Aquí te detallamos nuestros horarios de atención para que puedas contactarnos:</p>
-                <ul>
-                    <li>**Lunes:** De 10:00 AM a 11:00 AM y de 7:00 PM a 9:00 PM.</li>
-                    <li>**Martes, Jueves y Viernes:** De 7:00 AM a 11:00 AM y de 7:00 PM a 9:00 PM.</li>
-                    <li>**Miércoles:** Sin atención de asesores.</li>
-                    <li>**Sábados y Domingos:** Sin atención.</li>
-                </ul>
-                <p>Nuestros canales de atención son:</p>
-                <ul>
-                    <li><strong>Línea Telefónica Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a></li>
-                    <li><strong>Correo Electrónico:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a></li>
-                </ul>
-            `;
-            return channelsHtml;
-        }
-
-        // Función para obtener el mensaje de disponibilidad del asesor (actualizada con fecha y hora actual)
+        // --- Función para verificar la disponibilidad del asesor (simulada) ---
         async function getAdvisorAvailabilityMessage() {
-            const now = new Date(); 
-            const dayOfWeek = now.getDay(); 
-            const currentHour = now.getHours(); 
-            const currentMinute = now.getMinutes();
+            const now = new Date();
+            const day = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+            const hour = now.getHours(); // 0-23
 
-            let availabilityMessage = '';
-            let isAvailable = false;
+            let message = '';
+            const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}`;
 
-            if (dayOfWeek === 0 || dayOfWeek === 6) { 
-                availabilityMessage = '<p>Lo siento, nuestros asesores **no están disponibles** los **sábados y domingos**.</p>';
-            } else if (dayOfWeek === 3) { 
-                availabilityMessage = '<p>Hoy **Miércoles**, nuestros asesores **no tienen atención**.</p>';
-            } else { 
-                const isMorningSlot = (currentHour >= 7 && (currentHour < 11 || (currentHour === 11 && currentMinute === 0)));
-                const isAfternoonSlot = (currentHour >= 19 && (currentHour < 21 || (currentHour === 21 && currentMinute === 0)));
+            // Horario de atención: Lunes a Viernes 9 AM - 6 PM, Sábados 9 AM - 1 PM
+            const isWeekday = day >= 1 && day <= 5; // Lunes a Viernes
+            const isSaturday = day === 6;
 
-                if (dayOfWeek === 1) { 
-                    if ((currentHour >= 10 && (currentHour < 11 || (currentHour === 11 && currentMinute === 0))) || isAfternoonSlot) {
-                        isAvailable = true;
-                    }
-                } else { 
-                    if (isMorningSlot || isAfternoonSlot) {
-                        isAvailable = true;
-                    }
-                }
+            const isDuringWeekdayHours = hour >= 9 && hour < 18; // 9 AM a 5:59 PM
+            const isDuringSaturdayHours = hour >= 9 && hour < 13; // 9 AM a 12:59 PM
 
-                if (isAvailable) {
-                    availabilityMessage = '<p>¡Excelente! Nuestros asesores están **disponibles ahora mismo** para atenderte.</p>';
-                } else {
-                    availabilityMessage = '<p>Lo siento, nuestros asesores **no están disponibles en este momento**.</p>';
-                }
-
-                availabilityMessage += await getContactChannels(); // Reutiliza la función para mostrar horarios y canales.
-            }
-
-            if (isAvailable) {
-                availabilityMessage += `
-                    <p>Para un contacto rápido por WhatsApp, haz clic aquí: <a href="https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent('Hola, me gustaría hablar con un asesor.')}" target="_blank"><strong>Chatear por WhatsApp con Llutid+</strong></a></p>
+            if ((isWeekday && isDuringWeekdayHours) || (isSaturday && isDuringSaturdayHours)) {
+                // Dentro del horario de atención
+                message = `
+                    <p>¡Excelente! Has seleccionado hablar con un asesor de Llutid+. 🧑‍💼</p>
+                    <p>Nuestro equipo está disponible **en este momento** para asistirte de forma personalizada. Ellos podrán ayudarte con cualquier consulta o problema que tengas.</p>
+                    <p>Para tu comodidad, te recomendamos chatear con ellos directamente por WhatsApp. Haz clic en el siguiente botón para iniciar la conversación:</p>
+                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+                            Chatear con un Asesor de Llutid+ Ahora
+                        </a>
+                    </div>
+                    <p>También puedes llamarnos al <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> o escribirnos a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a>.</p>
+                    <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
                 `;
             } else {
-                availabilityMessage += `
-                    <p>Si tu consulta no puede esperar, puedes enviarnos un correo electrónico a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> y te responderemos lo antes posible.</p>
+                // Fuera del horario de atención
+                message = `
+                    <p>Has seleccionado hablar con un asesor. Actualmente, estamos **fuera de nuestro horario de atención**. 😴</p>
+                    <p>Nuestro equipo de soporte está disponible en los siguientes horarios:</p>
+                    <ul>
+                        <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia)</li>
+                        <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia)</li>
+                        <li>**Domingos y Festivos:** Cerrado.</li>
+                    </ul>
+                    <p>Te invitamos a contactarnos durante nuestro horario de atención para recibir asistencia en vivo. Si tu consulta es urgente o prefieres dejar un mensaje, puedes enviarnos un correo electrónico a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> o un mensaje por WhatsApp a nuestra línea principal: <a href="https://wa.me/${LLUTID_WHATSAPP_PHONE}" target="_blank">${LLUTID_WHATSAPP_PHONE}</a>, y te responderemos a la brevedad posible en nuestro próximo horario hábil.</p>
+                    <p>Gracias por tu comprensión. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
                 `;
             }
-            availabilityMessage += `<p>Para volver al menú principal, escribe **"Menú"**.</p>`;
-
-            return availabilityMessage;
+            conversationState = 'initial_menu'; // Vuelve al menú principal después de dar la info
+            return message;
         }
 
-
-        // Llama a la función para mostrar el mensaje de bienvenida al cargar la página
+        // Mostrar el mensaje de bienvenida al cargar la página
         displayInitialWelcomeMessage();
 
     </script>
-
 </body>
 </html>
