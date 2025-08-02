@@ -8,27 +8,27 @@
     <style>
         /* Estilos generales */
         body {
-            font-family: 'Poppins', sans-serif; /* Fuente más moderna */
-            background-color: #0d1117; /* Fondo ultra oscuro, similar a GitHub dark */
+            font-family: 'Poppins', sans-serif;
+            background-color: #0d1117;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* Oculta el scrollbar principal del body */
-            color: #c9d1d9; /* Color de texto general claro */
+            overflow: hidden;
+            color: #c9d1d9;
         }
         .chat-container {
-            width: 450px; /* Ancho fijo para escritorio */
-            height: 650px; /* Altura fija para escritorio */
-            background-color: #161b22; /* Fondo del chat un poco más claro que el body */
-            border-radius: 15px; /* Bordes más suaves */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); /* Sombra más pronunciada y oscura */
+            width: 450px;
+            height: 650px;
+            background-color: #161b22;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #30363d; /* Borde sutil y oscuro */
-            animation: fadeIn 0.5s ease-out; /* Animación de entrada */
+            border: 1px solid #30363d;
+            animation: fadeIn 0.5s ease-out;
         }
 
         @keyframes fadeIn {
@@ -38,30 +38,84 @@
 
         /* Encabezado del Chat */
         .chat-header {
-            background-color: #2188ff; /* Azul vibrante, ligeramente más oscuro para contraste */
+            background-color: #2188ff;
             color: white;
-            padding: 20px 25px; /* Más padding */
+            padding: 20px 25px;
             text-align: center;
-            font-size: 1.6em; /* Más grande */
-            font-weight: 700; /* Más grueso */
+            font-size: 1.6em;
+            font-weight: 700;
             border-top-left-radius: 15px;
             border-top-right-radius: 15px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); /* Sombra más suave */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
             position: relative;
-            z-index: 10; /* Asegura que la sombra se vea */
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+        .verification-badge {
+            position: absolute;
+            top: 25px;
+            left: 55%;
+            transform: translateX(110%);
+            width: 20px;
+            height: 20px;
+            background-color: #007bff;
+            border-radius: 50%;
+            border: 2px solid #161b22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 11;
+        }
+        .verification-badge svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .profile-info h3 {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+        .profile-info p {
+            margin: 0;
+            font-size: 0.8em;
+            font-weight: 400;
+            color: #d1e3ff;
+        }
+
 
         /* Caja de Mensajes */
         .chat-box {
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
-            background-color: #24292e; /* Fondo de los mensajes más oscuro */
+            background-color: #24292e;
             border-bottom: 1px solid #30363d;
             display: flex;
             flex-direction: column;
-            gap: 12px; /* Espacio entre mensajes */
-            scroll-behavior: smooth; /* Desplazamiento suave */
+            gap: 12px;
+            scroll-behavior: smooth;
         }
 
         /* Estilo de la barra de desplazamiento (para navegadores WebKit como Chrome/Safari) */
@@ -70,11 +124,11 @@
         }
 
         .chat-box::-webkit-scrollbar-track {
-            background: #24292e; /* Fondo de la barra de desplazamiento */
+            background: #24292e;
         }
 
         .chat-box::-webkit-scrollbar-thumb {
-            background-color: #555; /* Color del "pulgar" de la barra de desplazamiento */
+            background-color: #555;
             border-radius: 10px;
             border: 2px solid #24292e;
         }
@@ -84,14 +138,14 @@
         }
 
         .message {
-            padding: 12px 18px; /* Más padding */
-            border-radius: 20px; /* Bordes más redondeados */
-            max-width: 80%; /* Un poco más estrecho */
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 80%;
             word-wrap: break-word;
             line-height: 1.5;
             font-size: 0.98em;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            animation: messagePop 0.3s ease-out; /* Animación para cada mensaje */
+            animation: messagePop 0.3s ease-out;
         }
 
         @keyframes messagePop {
@@ -100,21 +154,21 @@
         }
 
         .message.user {
-            background-color: #007bff; /* Azul para mensajes de usuario */
+            background-color: #007bff;
             color: white;
             align-self: flex-end;
             margin-left: auto;
-            border-bottom-right-radius: 8px; /* Esquina menos redondeada en un lado */
+            border-bottom-right-radius: 8px;
         }
         .message.bot {
-            background-color: #3a3a3a; /* Gris oscuro para mensajes del bot */
-            color: #e0e0e0; /* Texto claro */
+            background-color: #3a3a3a;
+            color: #e0e0e0;
             align-self: flex-start;
             margin-right: auto;
             border: 1px solid #4a4a4a;
-            border-bottom-left-radius: 8px; /* Esquina menos redondeada en un lado */
+            border-bottom-left-radius: 8px;
         }
-        .message.system { /* Mensajes del sistema, como "escribiendo..." */
+        .message.system {
             font-style: italic;
             color: #888;
             text-align: center;
@@ -127,17 +181,17 @@
             animation: fadeIn 0.4s ease-out;
         }
         .message.code-display {
-            background-color: #2d3640; /* Un color suave para el código */
-            color: #a4ddff; /* Color distintivo para el texto del código (azul claro) */
-            font-family: 'Fira Code', 'Courier New', Courier, monospace; /* Fuente de código */
+            background-color: #2d3640;
+            color: #a4ddff;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
             font-weight: 600;
             text-align: center;
             padding: 15px 20px;
             border-radius: 10px;
             margin-top: 15px;
             margin-bottom: 15px;
-            border: 1px dashed #6a737d; /* Borde más visible */
-            letter-spacing: 1px; /* Espaciado entre letras */
+            border: 1px dashed #6a737d;
+            letter-spacing: 1px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
         .message ul {
@@ -146,27 +200,27 @@
             margin: 5px 0;
         }
         .message ul li {
-            margin-bottom: 7px; /* Más espacio */
+            margin-bottom: 7px;
             line-height: 1.6;
         }
         .message ul li strong {
-            color: #58a6ff; /* Azul más claro para destacar */
+            color: #58a6ff;
         }
         .message a {
-            color: #87CEEB; /* Azul claro para enlaces */
+            color: #87CEEB;
             text-decoration: none;
             font-weight: bold;
             transition: color 0.2s ease;
         }
         .message a:hover {
-            color: #58a6ff; /* Cambia de color al pasar el mouse */
+            color: #58a6ff;
             text-decoration: underline;
         }
 
         /* Botón de WhatsApp más llamativo */
         .whatsapp-button {
             display: inline-block;
-            background-color: #25d366; /* Verde WhatsApp */
+            background-color: #25d366;
             color: white;
             padding: 12px 25px;
             border-radius: 30px;
@@ -183,7 +237,7 @@
         }
 
         .whatsapp-button:hover {
-            background-color: #1da851; /* Verde más oscuro al pasar el mouse */
+            background-color: #1da851;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
@@ -193,7 +247,7 @@
         }
 
         .whatsapp-button::before {
-            content: '📞'; /* Icono de teléfono o WhatsApp */
+            content: '📞';
             font-size: 1.2em;
         }
 
@@ -204,37 +258,37 @@
             padding: 15px 20px;
             border-top: 1px solid #30363d;
             background-color: #161b22;
-            gap: 10px; /* Espacio entre input y botón */
+            gap: 10px;
         }
         .input-container input {
             flex-grow: 1;
-            padding: 14px 20px; /* Más padding */
+            padding: 14px 20px;
             border: 1px solid #555;
-            border-radius: 30px; /* Más redondeado */
-            font-size: 1.05em; /* Un poco más grande */
-            background-color: #333; /* Fondo del input oscuro */
-            color: white; /* Texto del input blanco */
+            border-radius: 30px;
+            font-size: 1.05em;
+            background-color: #333;
+            color: white;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .input-container input:focus {
             outline: none;
-            border-color: #007bff; /* Borde azul al enfocar */
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.4); /* Sombra al enfocar */
-            background-color: #2b2b2b; /* Ligeramente más claro al enfocar */
+            border-color: #007bff;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.4);
+            background-color: #2b2b2b;
         }
         .input-container button {
-            background-color: #007bff; /* Azul para el botón */
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 14px 25px; /* Más padding */
-            border-radius: 30px; /* Más redondeado */
+            padding: 14px 25px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 1.05em;
             font-weight: 600;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
         }
         .input-container button:hover {
-            background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+            background-color: #0056b3;
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
@@ -245,50 +299,50 @@
         /* --- MEDIA QUERIES PARA ADAPTACIÓN MÓVIL --- */
         @media (max-width: 768px) {
             body {
-                align-items: flex-start; /* Alinea arriba en móvil */
-                min-height: auto; /* Permite que el body se ajuste */
+                align-items: flex-start;
+                min-height: auto;
                 padding: 0;
             }
 
             .chat-container {
-                width: 100%; /* Ancho completo en móvil */
-                height: 100vh; /* Altura completa de la pantalla */
-                max-width: 100%; /* Asegura que no se desborde */
-                border-radius: 0; /* Sin bordes redondeados en los extremos para ocupar toda la pantalla */
-                box-shadow: none; /* Elimina la sombra para un aspecto más nativo */
-                border: none; /* Sin borde en móvil */
+                width: 100%;
+                height: 100vh;
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                border: none;
             }
 
             .chat-header {
-                font-size: 1.4em; /* Tamaño de fuente ligeramente más pequeño */
+                font-size: 1.4em;
                 padding: 18px 20px;
                 border-top-left-radius: 0;
                 border-top-right-radius: 0;
             }
 
             .chat-box {
-                padding: 15px; /* Menos padding */
-                gap: 10px; /* Menos espacio entre mensajes */
+                padding: 15px;
+                gap: 10px;
             }
 
             .message {
-                padding: 10px 15px; /* Más pequeño */
-                font-size: 0.95em; /* Texto ligeramente más pequeño */
-                max-width: 90%; /* Ocupa más ancho en móvil */
+                padding: 10px 15px;
+                font-size: 0.95em;
+                max-width: 90%;
             }
 
             .input-container {
-                padding: 10px 15px; /* Menos padding */
-                gap: 8px; /* Menos espacio entre input y botón */
+                padding: 10px 15px;
+                gap: 8px;
             }
 
             .input-container input {
-                padding: 12px 18px; /* Menos padding */
+                padding: 12px 18px;
                 font-size: 1em;
             }
 
             .input-container button {
-                padding: 12px 20px; /* Menos padding */
+                padding: 12px 20px;
                 font-size: 1em;
             }
 
@@ -324,7 +378,14 @@
 
     <div class="chat-container">
         <div class="chat-header">
-            Asistente Virtual Llutid+
+            <img src="https://i.postimg.cc/jq4kVY08/Whats-App-Image-2025-08-02-at-10-16-08-AM.jpg" class="profile-pic">
+            <div class="profile-info">
+                <h3>Soporte Oficial Llutid+</h3>
+                <p>En línea • Asistente Virtual</p>
+            </div>
+            <div class="verification-badge">
+                 <svg aria-label="Cuenta verificada" class="_ab6-" color="#ffffff" fill="#ffffff" height="12" role="img" viewBox="0 0 48 48" width="12"><path d="M46.7 8.9l-2.9-3c-.9-.9-2.2-1.2-3.4-.6l-5.6 2.8c-.8.4-1.3 1.2-1.3 2.1v2.5c0 .8.6 1.4 1.4 1.4h2.5c.9 0 1.7-.5 2.1-1.3l2.8-5.6c.6-1.2.3-2.5-.6-3.4l-3-2.9c-1.1-1.1-2.9-1.1-4 0l-4.2 4.2c-1.1 1.1-1.1 2.9 0 4l1.1 1.1c.4.4.4 1 .1 1.4-.3.4-.9.4-1.3.1l-1.1-1.1c-1.1-1.1-2.9-1.1-4 0l-4.2 4.2c-1.1 1.1-1.1 2.9 0 4l4.2 4.2c1.1 1.1 2.9 1.1 4 0l4.2-4.2c1.1-1.1 1.1-2.9 0-4L30 18.2c-.4-.4-.4-1-.1-1.4.3-.4.9-.4 1.3-.1l1.1 1.1c.4.4 1.2.4 1.6 0l2.8-2.8c.4-.4 1.2-.4 1.6 0l2.8 2.8c.4.4 1.2.4 1.6 0l4.2-4.2c.4-.4.4-1 0-1.4zm-9.9 1.4c-.4.4-.4 1 0 1.4l1.1 1.1c.4.4 1.2.4 1.6 0l2.8-2.8c.4-.4-1.2-.4-1.6 0l-2.8 2.8c-.4.4-1.2.4-1.6 0z" fill="#ffffff" stroke-width="0" transform="translate(-1.000000, -1.000000) scale(1.000000, 1.000000) rotate(0.000000)"></path></svg>
+            </div>
         </div>
         <div class="chat-box" id="chat-box">
             </div>
@@ -370,6 +431,8 @@
         const LLUTID_ABOUT_URL = 'https://www.llutid.com/quienes-somos';
         const LLUTID_PLANS_URL = 'https://www.llutid.com/planes';
         const LLUTID_HELP_URL = 'https://www.llutid.com/ayuda';
+        // --- URL del formulario de reporte de errores ---
+        const LLUTID_BUG_REPORT_FORM = 'https://forms.gle/FwNG8E6yTBNB4MCf9';
 
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', function(e) {
@@ -386,7 +449,7 @@
                 messageDiv.classList.add(className);
             }
             // Usa innerHTML si el texto contiene etiquetas HTML (como listas, negritas, enlaces)
-            if (sender === 'bot' && (text.includes('<ul>') || text.includes('<a href=') || text.includes('<p>') || text.includes('<strong>') || text.includes('<div>'))) { // Añadido <div> para elementos como el botón de WhatsApp
+            if (sender === 'bot' && (text.includes('<ul>') || text.includes('<a href=') || text.includes('<p>') || text.includes('<strong>') || text.includes('<div>'))) {
                 messageDiv.innerHTML = text;
             } else {
                 messageDiv.textContent = text;
@@ -424,9 +487,22 @@
             return `${randomChar}${randomDigits}53`;
         }
 
+        // Obtiene el saludo según la hora del día
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) {
+                return 'Buenos días';
+            } else if (hour < 19) {
+                return 'Buenas tardes';
+            } else {
+                return 'Buenas noches';
+            }
+        }
+
         // Muestra el mensaje de bienvenida inicial
         function displayInitialWelcomeMessage() {
-            appendMessage('¡Hola! 👋 Soy tu asistente virtual de Llutid+.', 'bot');
+            const greeting = getGreeting();
+            appendMessage(`¡${greeting}! 👋 Soy Cebrid, tu asistente virtual de Llutid+.`, 'bot');
             appendMessage('Estoy aquí para ayudarte con cualquier consulta o problema que tengas. Escribe **"Hola"** o un saludo para comenzar.', 'bot');
         }
 
@@ -447,6 +523,7 @@
                     <li><strong>5.</strong> Soporte de problemas, quejas o sugerencias.</li>
                     <li><strong>6.</strong> Hablar con un asesor.</li>
                     <li><strong>7.</strong> Cancelación de cuenta.</li>
+                    <li><strong>8.</strong> Reportar un error técnico de la plataforma.</li>
                 </ul>
                 <p>Si en algún momento quieres volver a este menú, simplemente escribe **"Menú"** o el **número 0**.</p>
             `;
@@ -468,6 +545,21 @@
             let botResponse = '';
             const normalizedMessage = message.toLowerCase();
 
+            // *** MEJORA: Manejo de saludos y despedidas ***
+            if (['adiós', 'chao', 'hasta luego', 'bye'].some(word => normalizedMessage.includes(word))) {
+                removeTypingIndicator();
+                appendMessage('¡Adiós! Que tengas un excelente día. Si necesitas algo más, no dudes en volver a contactarnos. 👋', 'bot');
+                conversationState = 'awaiting_greeting'; // Reinicia el estado
+                return;
+            }
+
+            // *** MEJORA: Manejo de agradecimientos ***
+            if (['gracias', 'muchas gracias', 'mil gracias'].some(word => normalizedMessage.includes(word))) {
+                removeTypingIndicator();
+                appendMessage('De nada, ¡es un placer ayudarte! Si necesitas algo más, no dudes en volver a contactarnos. 😊', 'bot');
+                return;
+            }
+
             // Manejo global de "Menú" o "0" (para volver al menú principal)
             if (normalizedMessage === 'menu' || normalizedMessage === '0') {
                 removeTypingIndicator();
@@ -475,6 +567,29 @@
                 return;
             }
 
+            // *** MEJORA: Reconocimiento de palabras clave para el menú principal ***
+            if (conversationState === 'initial_menu') {
+                if (['problemas', 'cuenta', 'login', 'iniciar sesion'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('1');
+                } else if (['quiero una cuenta', 'registro', 'ser parte', 'nueva cuenta'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('2');
+                } else if (['que es llutid', 'llutid+', 'informacion'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('3');
+                } else if (['faq', 'preguntas frecuentes', 'dudas'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('4');
+                } else if (['soporte', 'quejas', 'sugerencias', 'reportar'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('5');
+                } else if (['asesor', 'hablar con asesor', 'agente', 'persona'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('6');
+                } else if (['cancelar', 'cancelacion de cuenta', 'dar de baja'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('7');
+                } else if (['error', 'reporte de error', 'bug'].some(word => normalizedMessage.includes(word))) {
+                    botResponse = await handleInitialMenuSelection('8');
+                }
+            }
+
+
+            // Lógica principal del chatbot
             switch (conversationState) {
                 case 'awaiting_greeting':
                     if (normalizedMessage.includes('hola') || normalizedMessage.includes('buenos dias') || normalizedMessage.includes('buenas tardes') || normalizedMessage.includes('buenas noches') || normalizedMessage.includes('que tal')) {
@@ -486,7 +601,10 @@
                     }
                     break;
                 case 'initial_menu':
-                    botResponse = await handleInitialMenuSelection(message);
+                    // Si ya se manejó por palabras clave, no hacer nada aquí
+                    if (!botResponse) {
+                        botResponse = await handleInitialMenuSelection(message);
+                    }
                     break;
                 case 'sub_menu_1': // Problemas con la cuenta o login
                     botResponse = await handleSubMenu1Selection(message);
@@ -518,8 +636,12 @@
                 case 'confirm_send_feedback':
                     botResponse = await handleConfirmSendFeedback(message);
                     break;
+                case 'sub_menu_1_login_issue': // Nuevo estado para manejar las opciones de este sub-menú
+                    botResponse = await handleLoginIssueSelection(message);
+                    break;
                 default:
-                    botResponse = 'Lo siento, no pude entender tu solicitud en este momento. Por favor, selecciona una opción del menú principal escribiendo el número correspondiente, o escribe **"Menú"** o el **"0"** para ver todas las opciones disponibles. 🤔';
+                    // *** MEJORA: Mensaje de fallback más amigable ***
+                    botResponse = 'Lo siento, no pude entender tu solicitud en este momento. Si necesitas ayuda, por favor, selecciona una opción del menú principal escribiendo el número correspondiente, o escribe **"Menú"** o el **"0"** para ver todas las opciones disponibles. 🤔';
                     break;
             }
             removeTypingIndicator();
@@ -594,14 +716,25 @@
                         <p>Para asegurar que tu cuenta sea cancelada de manera segura y conforme a nuestros protocolos, por favor, contacta a nuestro equipo de soporte. Ellos te guiarán a través de los pasos necesarios.</p>
                         <p>Estamos disponibles en:</p>
                         <ul>
-                            <li><strong>Línea Telefónica de Soporte Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> (Horario de atención: Lunes a Viernes, 9 AM - 6 PM, Hora Colombia).</li>
+                            <li><strong>Línea Telefónica de Soporte Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> (Horario de atención: Lunes a Sábado, 9 AM - 6 PM, Hora Colombia).</li>
                             <li><strong>Correo Electrónico Oficial:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> (Responderemos en menos de 24 horas hábiles).</li>
                         </ul>
                         <p>Agradecemos tu comprensión y paciencia. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
                     `;
                     break;
+                case '8':
+                    response = `
+                        <p>¡Gracias por tu ayuda para mejorar Llutid+! 😊</p>
+                        <p>Si estás experimentando un **error técnico en la plataforma (bug)**, la forma más rápida de reportarlo a nuestro equipo técnico es a través de nuestro formulario especializado.</p>
+                        <p>Por favor, haz clic en el siguiente enlace y describe el problema detalladamente:</p>
+                        <p><a href="${LLUTID_BUG_REPORT_FORM}" target="_blank">**Formulario de Reporte de Errores Llutid+**</a></p>
+                        <p>Tu reporte pasará por una revisión y nuestro equipo técnico se encargará de corregirlo lo antes posible.</p>
+                        <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
+                    `;
+                    conversationState = 'initial_menu';
+                    break;
                 default:
-                    response = '¡Ups! Parece que no seleccionaste una opción válida. Por favor, elige un **número del 1 al 7** del menú principal. O si prefieres, escribe **"Menú"** o el **"0"** para que te muestre las opciones nuevamente. 😉';
+                    response = '¡Ups! Parece que no seleccionaste una opción válida. Por favor, elige un **número del 1 al 8** del menú principal. O si prefieres, escribe **"Menú"** o el **"0"** para que te muestre las opciones nuevamente. 😉';
                     break;
             }
             return response;
@@ -624,8 +757,17 @@
                     break;
                 case '3': // No puedo ingresar a mi cuenta / No funciona el login.
                     currentRequestType = 'problema al iniciar sesión';
-                    conversationState = 'awaiting_full_name';
-                    response = 'Lamento que estés teniendo problemas para iniciar sesión. Para investigar y ayudarte con este inconveniente, por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, tal como aparece en tu cuenta de Llutid+. Ejemplo: **CARLOS RODRIGUEZ SANCHEZ**. Puedes escribir **0** para volver al menú principal. ❌';
+                    response = `
+                        <p>Lamento mucho que estés teniendo problemas para iniciar sesión. 😟</p>
+                        <p>Antes de cualquier otra cosa, por favor, **cierra la aplicación y vuélvela a abrir, o recarga la página web**. A menudo, este simple paso soluciona problemas temporales de conexión y funcionamiento.</p>
+                        <p>Si el problema persiste después de intentarlo, por favor, selecciona una de las siguientes opciones para que podamos ayudarte:</p>
+                        <ul>
+                            <li><strong>1.</strong> **Chatear con un asesor:** Te pondremos en contacto directo con nuestro equipo por WhatsApp para que puedan revisar tu caso.</li>
+                            <li><strong>2.</strong> **Reportar un error técnico:** Si crees que es un problema de la plataforma (bug), puedes usar nuestro formulario de reporte para que el equipo técnico lo revise.</li>
+                        </ul>
+                        <p>Puedes escribir **"0"** para volver al menú principal en cualquier momento. ❌</p>
+                    `;
+                    conversationState = 'sub_menu_1_login_issue'; // Nuevo estado para manejar las opciones de este sub-menú
                     break;
                 case '4': // Otro problema con mi cuenta.
                     response = `
@@ -641,6 +783,42 @@
                     break;
                 default:
                     response = '¡Vaya! Esa opción no es válida para esta sección. Por favor, selecciona un **número del 1 al 4**, o el **0** para volver al menú principal. 🤔';
+                    break;
+            }
+            return response;
+        }
+
+        // --- Nuevo estado para el problema de login ---
+        async function handleLoginIssueSelection(userMessage) {
+            const normalizedMessage = userMessage.trim();
+            let response = '';
+
+            switch (normalizedMessage) {
+                case '1':
+                    const whatsappMessage = `Hola Llutid+, no puedo iniciar sesión en mi cuenta. Ya intenté reiniciar la aplicación y el problema persiste. Por favor, ayúdenme.`;
+                    const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
+                    response = `
+                        <p>¡Entendido! Te hemos preparado un mensaje para que hables directamente con uno de nuestros asesores por WhatsApp y puedan ayudarte a resolver este problema lo antes posible.</p>
+                        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                            <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+                                Chatear con Soporte de Llutid+
+                            </a>
+                        </div>
+                        <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
+                    `;
+                    conversationState = 'initial_menu';
+                    break;
+                case '2':
+                    response = `
+                        <p>¡Gracias por tu ayuda para mejorar Llutid+! 😊</p>
+                        <p>Por favor, haz clic en el siguiente enlace para acceder a nuestro formulario de reporte de errores y describe el problema detalladamente. Nuestro equipo técnico lo revisará y trabajará para corregirlo.</p>
+                        <p><a href="${LLUTID_BUG_REPORT_FORM}" target="_blank">**Formulario de Reporte de Errores Llutid+**</a></p>
+                        <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
+                    `;
+                    conversationState = 'initial_menu';
+                    break;
+                default:
+                    response = 'Opción no válida. Por favor, selecciona **1** o **2** para continuar, o **0** para volver al menú principal.';
                     break;
             }
             return response;
@@ -706,6 +884,7 @@
 
             if (currentUser) {
                 conversationState = 'awaiting_phone_number';
+                // *** MEJORA: Usar el nombre del usuario en la respuesta ***
                 return `¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia. Ahora, para confirmar tu identidad, por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal.`;
             } else {
                 conversationState = 'initial_menu';
@@ -785,18 +964,20 @@
                         </ul>
                         <p>Siempre estamos actualizando nuestro catálogo para ofrecerte lo mejor. ¡Explora y encuentra tu próximo favorito!</p>
                         <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
+                        <p>***MEJORA: ¿Te gustaría saber sobre los precios y planes? Escribe **"2"** para ver los detalles.***</p>
                     `;
                     break;
                 case '2':
                     response = `
                         <p>¡Llutid+ se adapta a ti con planes muy económicos y flexibles! 💰</p>
+                        <p>Actualmente, tenemos una **promoción especial**. Puedes obtener el plan mensual por solo **2.500 COP** (antes 5.000 COP).</p>
                         <ul>
-                            <li>**Plan Individual:** Desde **2.500 COP** (por persona). Ideal si quieres disfrutar solo.</li>
-                            <li>**Planes Familiares:** Opciones con múltiples perfiles y pantallas para que todos en casa disfruten. ¡Más económico por persona!</li>
+                            <li>**Planes de Suscripción:** Ofrecemos planes para perfiles individuales y paquetes familiares.</li>
+                            <li>**Facturación:** Se te enviará una factura electrónica por cada pago realizado.</li>
                         </ul>
-                        <p>Ofrecemos diferentes duraciones de suscripción (semanal, mensual, trimestral). Puedes consultar todos nuestros planes detallados y precios actualizados en nuestra página oficial: <a href="${LLUTID_PLANS_URL}" target="_blank">Ver Planes y Precios de Llutid+</a>.</p>
-                        <p>¡Te garantizamos una excelente relación calidad-precio!</p>
+                        <p>Para más información o para contratar un plan, te invitamos a visitar nuestra página oficial: <a href="${LLUTID_PLANS_URL}" target="_blank">Ver Planes y Precios de Llutid+</a>.</p>
                         <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
+                        <p>***MEJORA: Si deseas iniciar el proceso de registro, escribe **"2"** en el menú principal.***</p>
                     `;
                     break;
                 case '3':
@@ -818,6 +999,7 @@
                         <ul>
                             <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia).</li>
                             <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia).</li>
+                            <li>**Miércoles:** ¡Cerrado! Tomamos este día para mejorar nuestros servicios.</li>
                             <li>**Domingos y Festivos:** Cerrado.</li>
                         </ul>
                         <p>Fuera de este horario, puedes dejarnos un mensaje por correo electrónico o WhatsApp, y te responderemos a primera hora del siguiente día hábil. ¡Gracias por tu comprensión!</p>
@@ -829,6 +1011,7 @@
                         <p>Actualmente, Llutid+ no ofrece pruebas gratuitas estándar. Sin embargo, tenemos una excelente noticia: ¡nuestros planes son tan económicos que puedes comenzar a disfrutar del entretenimiento desde solo **2.500 COP**!</p>
                         <p>Ocasionalmente, lanzamos **promociones y descuentos especiales** para nuevos usuarios o en fechas específicas. Te recomendamos seguirnos en nuestras redes sociales y estar atento a nuestra página web para no perderte ninguna oferta. ¡Siempre hay algo emocionante esperándote! ✨</p>
                         <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
+                        <p>***MEJORA: ¿Te gustaría ver nuestros planes de suscripción para ver lo económicos que son? Escribe **"2"** para ver los detalles.***</p>
                     `;
                     break;
                 default:
@@ -853,8 +1036,6 @@
             let response = '';
 
             if (normalizedConfirmation === 'si' || normalizedConfirmation === 'sí') {
-                // Aquí iría la lógica para enviar el feedback a un sistema (ej. email, base de datos)
-                // Por ahora, solo simulamos el envío y preparamos el enlace de WhatsApp
                 const whatsappMessage = `Hola Llutid+, tengo un problema/queja/sugerencia que quiero reportar:%0A%0A"${userFeedback}"%0A%0APor favor, ayúdenme con esto.`;
                 const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
 
@@ -862,7 +1043,6 @@
                     <p>¡Excelente! Hemos registrado tu mensaje y te agradecemos por compartirlo. Tu opinión es fundamental para nosotros. 🙏</p>
                     <p>Para asegurarnos de que tu problema, queja o sugerencia sea atendido de la manera más eficaz y que podamos recopilar cualquier detalle adicional si es necesario, te invitamos a **contactar directamente con un asesor de soporte a través de WhatsApp**.</p>
                     <p>Esto nos permitirá dar seguimiento a tu caso de forma personalizada y ofrecerte la mejor solución.</p>
-                    <p>Haz clic en el siguiente botón para iniciar el chat con nuestro equipo:</p>
                     <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
                         <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
                             Chatear con Soporte de Llutid+
@@ -896,11 +1076,19 @@
             // Horario de atención: Lunes a Viernes 9 AM - 6 PM, Sábados 9 AM - 1 PM
             const isWeekday = day >= 1 && day <= 5; // Lunes a Viernes
             const isSaturday = day === 6;
+            const isWednesday = day === 3; // Miércoles
 
             const isDuringWeekdayHours = hour >= 9 && hour < 18; // 9 AM a 5:59 PM
             const isDuringSaturdayHours = hour >= 9 && hour < 13; // 9 AM a 12:59 PM
 
-            if ((isWeekday && isDuringWeekdayHours) || (isSaturday && isDuringSaturdayHours)) {
+            if (isWednesday) {
+                message = `
+                    <p>¡Hola! Has seleccionado hablar con un asesor. Te informamos que hoy, **miércoles, nuestro equipo de soporte está cerrado** por mantenimiento y mejoras. 🛠️</p>
+                    <p>Puedes contactarnos durante nuestro horario habitual para recibir asistencia en vivo: **Lunes, Martes, Jueves y Viernes** de **9:00 AM a 6:00 PM**, y **Sábados** de **9:00 AM a 1:00 PM**.</p>
+                    <p>Si tu consulta es urgente, puedes dejarnos un mensaje por correo electrónico a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> o un mensaje por WhatsApp a nuestra línea principal, y te responderemos a la brevedad posible.</p>
+                    <p>Gracias por tu comprensión. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
+                `;
+            } else if ((isWeekday && isDuringWeekdayHours) || (isSaturday && isDuringSaturdayHours)) {
                 // Dentro del horario de atención
                 message = `
                     <p>¡Excelente! Has seleccionado hablar con un asesor de Llutid+. 🧑‍💼</p>
@@ -920,8 +1108,8 @@
                     <p>Has seleccionado hablar con un asesor. Actualmente, estamos **fuera de nuestro horario de atención**. 😴</p>
                     <p>Nuestro equipo de soporte está disponible en los siguientes horarios:</p>
                     <ul>
-                        <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia)</li>
-                        <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia)</li>
+                        <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia), **excepto los miércoles**.</li>
+                        <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia).</li>
                         <li>**Domingos y Festivos:** Cerrado.</li>
                     </ul>
                     <p>Te invitamos a contactarnos durante nuestro horario de atención para recibir asistencia en vivo. Si tu consulta es urgente o prefieres dejar un mensaje, puedes enviarnos un correo electrónico a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> o un mensaje por WhatsApp a nuestra línea principal: <a href="https://wa.me/${LLUTID_WHATSAPP_PHONE}" target="_blank">${LLUTID_WHATSAPP_PHONE}</a>, y te responderemos a la brevedad posible en nuestro próximo horario hábil.</p>
@@ -934,7 +1122,6 @@
 
         // Mostrar el mensaje de bienvenida al cargar la página
         displayInitialWelcomeMessage();
-
     </script>
 </body>
 </html>
