@@ -383,10 +383,11 @@
             { fullName: 'RICARDO GIRALDO', phoneNumber: '3508591280' },
             { fullName: 'MATEO BUSTOS', phoneNumber: '3243724956' },
             { fullName: 'YEFERSON STIVEN', phoneNumber: '3106307450' },
-            { fullName: 'CARLOS RODRIGUEZ SANCHEZ', phoneNumber: '3125551234' }
+            { fullName: 'CARLOS RODRIGUEZ SANCHEZ', phoneNumber: '3125551234' },
+            { fullName: 'ANDERSON', phoneNumber: '3181087834' }
         ];
 
-        let conversationState = 'initial_welcome'; // Nuevo estado inicial para mostrar el mensaje de bienvenida
+        let conversationState = 'awaiting_greeting'; // Nuevo estado inicial para esperar el saludo
         let currentUser = null; // Guardar el usuario que se está verificando
         let currentRequestType = ''; // 'password_change', 'email_change', 'login_issue', 'new_account_request', 'support_feedback'
         let generatedCode = ''; // Almacena el código de verificación generado
@@ -483,9 +484,8 @@
             const greeting = getGreeting();
             appendMessage(`¡${greeting}! 👋 Soy Cebrid, tu asistente virtual de Llutid+.`, 'bot');
             await new Promise(resolve => setTimeout(resolve, 1000));
-            appendMessage('Estoy aquí para ayudarte con cualquier consulta o problema que tengas.', 'bot');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await showMenu();
+            appendMessage('Estoy aquí para ayudarte con cualquier consulta o problema que tengas. Para empezar, solo escríbeme lo que necesites o un saludo como **"Hola"**.', 'bot');
+            conversationState = 'awaiting_greeting'; // Establece el estado para esperar un mensaje del usuario
         }
 
         // Muestra el menú de opciones (principal)
@@ -531,7 +531,7 @@
             if (['adiós', 'chao', 'hasta luego', 'bye'].some(word => normalizedMessage.includes(word))) {
                 removeTypingIndicator();
                 appendMessage('¡Adiós! Que tengas un excelente día. Si necesitas algo más, no dudes en volver a contactarnos. 👋', 'bot');
-                conversationState = 'initial_welcome'; // Reinicia el estado para un nuevo saludo
+                conversationState = 'awaiting_greeting'; // Reinicia el estado para un nuevo saludo
                 return;
             }
 
@@ -552,14 +552,9 @@
 
             // Lógica principal del chatbot
             switch (conversationState) {
-                case 'initial_welcome':
-                    if (normalizedMessage.includes('hola') || normalizedMessage.includes('buenos dias') || normalizedMessage.includes('buenas tardes') || normalizedMessage.includes('buenas noches') || normalizedMessage.includes('que tal')) {
-                        removeTypingIndicator();
-                        await showMenu();
-                        return;
-                    } else {
-                        botResponse = 'Para iniciar nuestra conversación, por favor, escribe **"Hola"** o un saludo. ¡Estoy aquí para asistirte con gusto! 😊';
-                    }
+                case 'awaiting_greeting':
+                    removeTypingIndicator();
+                    await showMenu();
                     break;
                 case 'initial_menu':
                     // Si ya se manejó por palabras clave, no hacer nada aquí
@@ -708,8 +703,8 @@
             switch (normalizedMessage) {
                 case '1': // Se me olvidó la contraseña / PIN.
                     currentRequestType = 'restablecimiento de contraseña/PIN';
-                    conversationState = 'awaiting_full_name';
-                    response = 'Para ayudarte a restablecer tu contraseña o PIN, necesito verificar tu identidad. Por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, tal como lo registraste en tu cuenta. Ejemplo: **JUAN PEREZ GOMEZ**. Puedes escribir **0** para volver al menú principal si lo deseas. 🔐';
+                    conversationState = 'awaiting_phone_number';
+                    response = 'Para ayudarte a restablecer tu contraseña o PIN, necesito verificar tu identidad. Por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal si lo deseas. 🔐';
                     break;
                 case '2': // Quiero cambiar mi correo electrónico.
                     currentRequestType = 'cambio de correo electrónico';
@@ -846,7 +841,7 @@
             if (currentUser) {
                 conversationState = 'awaiting_phone_number';
                 // *** MEJORA: Usar el nombre del usuario en la respuesta ***
-                return `¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia. Ahora, para confirmar tu identidad, por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal.`;
+                return `¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia. Ahora, para confirmar tu identidad, por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal si lo deseas.`;
             } else {
                 conversationState = 'initial_menu';
                 currentUser = null;
@@ -861,12 +856,15 @@
 
         async function handlePhoneNumber(phoneNumber) {
             const cleanPhoneNumber = phoneNumber.replace(/\D/g, '');
+            currentUser = usersDB.find(user => user.phoneNumber === cleanPhoneNumber);
 
-            if (currentUser && currentUser.phoneNumber === cleanPhoneNumber) {
+            if (currentUser) {
                 generatedCode = generateRandomCode();
                 conversationState = 'awaiting_security_code';
 
-                appendMessage(`¡Identidad verificada exitosamente! 🎉 Para el paso final de seguridad de tu solicitud de **${currentRequestType}**, te enviaré un código único de verificación.`, 'bot');
+                appendMessage(`¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia.`, 'bot');
+                await new Promise(resolve => setTimeout(resolve, 1200));
+                appendMessage(`Para el paso final de seguridad de tu solicitud de **${currentRequestType}**, te enviaré un código único de verificación.`, 'bot');
                 await new Promise(resolve => setTimeout(resolve, 1200));
 
                 appendMessage(`Tu código de seguridad es:`, 'bot');
@@ -877,7 +875,7 @@
                 currentUser = null;
                 currentRequestType = '';
                 generatedCode = '';
-                appendMessage('<p>El número de celular ingresado **no coincide** con el número registrado para este usuario. 🚫 **Acceso denegado.**</p><p>Por favor, revisa tus datos y intenta nuevamente o selecciona otra opción del menú principal.</p>', 'bot');
+                appendMessage('<p>El número de celular ingresado **no coincide** con el número registrado para este usuario. 🚫 **Acceso denegado.**</p><p>Por favor, revisa tus datos y selecciona otra opción del menú principal.</p>', 'bot');
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 await showMenu(true);
                 return '';
