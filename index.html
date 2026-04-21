@@ -3,1084 +3,1772 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot Asistente Virtual Llutid+</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Llutid+ | Asistente Virtual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos generales */
+        :root {
+            --bg: #04070f;
+            --surface: #080e1c;
+            --surface2: #0d1526;
+            --surface3: #121c32;
+            --border: rgba(80,160,255,0.1);
+            --border2: rgba(80,160,255,0.18);
+            --accent: #4f8fff;
+            --accent2: #7c6df8;
+            --accent-glow: rgba(79,143,255,0.25);
+            --text: #dde5f5;
+            --text-muted: #5a6a88;
+            --text-dim: #8a9ab8;
+            --success: #22d3a0;
+            --warning: #f59e0b;
+            --danger: #f06c6c;
+            --user-bubble: linear-gradient(145deg, #4f8fff 0%, #7c6df8 100%);
+            --bot-bubble: #0d1526;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #0d1117;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             overflow: hidden;
-            color: #c9d1d9;
+            color: var(--text);
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 900px 700px at 15% 5%, rgba(79,143,255,0.06) 0%, transparent 65%),
+                radial-gradient(ellipse 700px 900px at 85% 95%, rgba(124,109,248,0.06) 0%, transparent 65%),
+                radial-gradient(ellipse 400px 400px at 50% 50%, rgba(34,211,160,0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .chat-container {
-            width: 450px;
-            height: 650px;
-            background-color: #161b22;
-            border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 1;
+            width: 440px;
+            height: 93vh;
+            max-height: 840px;
+            background: var(--surface);
+            border-radius: 28px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #30363d;
-            animation: fadeIn 0.5s ease-out;
+            border: 1px solid var(--border2);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.025),
+                0 40px 100px rgba(0,0,0,0.7),
+                0 0 60px rgba(79,143,255,0.07);
+            animation: slideUp 0.65s cubic-bezier(0.34,1.56,0.64,1) both;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Encabezado del Chat */
+        /* ── HEADER ── */
         .chat-header {
-            background-color: #2188ff;
-            color: white;
-            padding: 20px 25px;
-            text-align: center;
-            font-size: 1.6em;
-            font-weight: 700;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 10;
+            padding: 14px 16px;
+            background: linear-gradient(160deg, #070f20 0%, #0a1328 100%);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 10px;
+            position: relative;
+            flex-shrink: 0;
         }
-        .profile-pic {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid white;
+
+        .chat-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 20px; right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(79,143,255,0.5), transparent);
+        }
+
+        .avatar-wrap { position: relative; flex-shrink: 0; }
+
+        .avatar {
+            width: 42px; height: 42px;
+            border-radius: 14px;
             object-fit: cover;
+            border: 2px solid rgba(79,143,255,0.35);
+            box-shadow: 0 0 20px rgba(79,143,255,0.2);
         }
-        .profile-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+
+        .avatar-badge {
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 12px; height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2.5px solid var(--surface);
+            animation: pulse-badge 2.2s infinite;
         }
-        .profile-info h3 {
-            margin: 0;
-            font-size: 1.1em;
+
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,160,0.5); }
+            50% { box-shadow: 0 0 0 5px rgba(34,211,160,0); }
+        }
+
+        .header-info { flex: 1; min-width: 0; }
+
+        .header-name {
+            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            color: white;
-            line-height: 1.2;
-        }
-        .profile-info p {
-            margin: 0;
-            font-size: 0.8em;
-            font-weight: 400;
-            color: #d1e3ff;
+            font-size: 0.92rem;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
+        .header-status {
+            font-size: 0.68rem;
+            color: var(--success);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            margin-top: 1px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-        /* Caja de Mensajes */
+        .header-status.live {
+            color: #f59e0b;
+        }
+
+        .header-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f8fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            flex-shrink: 0;
+        }
+
+        /* Header buttons */
+        .header-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .news-btn {
+            background: rgba(79,143,255,0.1);
+            border: 1px solid rgba(79,143,255,0.22);
+            color: #93c5fd;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .news-btn:hover { background: rgba(79,143,255,0.18); transform: scale(1.04); }
+        .news-btn .dot {
+            display: inline-block;
+            width: 5px; height: 5px;
+            background: #4f8fff;
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: pulse-badge 1.5s infinite;
+            vertical-align: middle;
+        }
+
+        /* Finalizar chat button — hidden by default */
+        .end-chat-btn {
+            display: none;
+            background: rgba(240,108,108,0.12);
+            border: 1px solid rgba(240,108,108,0.3);
+            color: #f87171;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.02em;
+        }
+        .end-chat-btn.visible { display: block; }
+        .end-chat-btn:hover { background: rgba(240,108,108,0.22); transform: scale(1.04); }
+
+        /* ── CHAT BOX ── */
         .chat-box {
-            flex-grow: 1;
+            flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background-color: #24292e;
-            border-bottom: 1px solid #30363d;
+            padding: 18px 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             scroll-behavior: smooth;
         }
 
-        /* Estilo de la barra de desplazamiento (para navegadores WebKit como Chrome/Safari) */
-        .chat-box::-webkit-scrollbar {
-            width: 8px;
+        .chat-box::-webkit-scrollbar { width: 4px; }
+        .chat-box::-webkit-scrollbar-track { background: transparent; }
+        .chat-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 4px; }
+
+        .msg-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            animation: msgIn 0.28s cubic-bezier(0.34,1.4,0.64,1) both;
         }
 
-        .chat-box::-webkit-scrollbar-track {
-            background: #24292e;
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .chat-box::-webkit-scrollbar-thumb {
-            background-color: #555;
-            border-radius: 10px;
-            border: 2px solid #24292e;
-        }
+        .msg-row.user { flex-direction: row-reverse; }
 
-        .chat-box::-webkit-scrollbar-thumb:hover {
-            background-color: #777;
+        .bot-icon {
+            width: 26px; height: 26px;
+            background: linear-gradient(145deg, var(--accent), var(--accent2));
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(79,143,255,0.3);
         }
 
         .message {
-            padding: 12px 18px;
-            border-radius: 20px;
-            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 82%;
+            line-height: 1.58;
+            font-size: 0.875rem;
             word-wrap: break-word;
-            line-height: 1.5;
-            font-size: 0.98em;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            animation: messagePop 0.3s ease-out;
         }
 
-        @keyframes messagePop {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        .message.bot {
+            background: var(--bot-bubble);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 5px;
         }
 
         .message.user {
-            background-color: #007bff;
+            background: var(--user-bubble);
             color: white;
-            align-self: flex-end;
-            margin-left: auto;
-            border-bottom-right-radius: 8px;
-        }
-        .message.bot {
-            background-color: #3a3a3a;
-            color: #e0e0e0;
-            align-self: flex-start;
-            margin-right: auto;
-            border: 1px solid #4a4a4a;
-            border-bottom-left-radius: 8px;
-        }
-        .message.system {
-            font-style: italic;
-            color: #888;
-            text-align: center;
-            align-self: center;
-            background: none;
-            box-shadow: none;
-            padding: 8px 0;
-            margin: 0;
-            font-size: 0.88em;
-            animation: fadeIn 0.4s ease-out;
-        }
-        .message.code-display {
-            background-color: #2d3640;
-            color: #a4ddff;
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            font-weight: 600;
-            text-align: center;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            border: 1px dashed #6a737d;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        .message ul {
-            list-style: none;
-            padding-left: 0;
-            margin: 5px 0;
-        }
-        .message ul li {
-            margin-bottom: 7px;
-            line-height: 1.6;
-        }
-        .message ul li strong {
-            color: #58a6ff;
-        }
-        .message a {
-            color: #87CEEB;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.2s ease;
-        }
-        .message a:hover {
-            color: #58a6ff;
-            text-decoration: underline;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 4px 20px rgba(79,143,255,0.25);
         }
 
-        /* Botón de WhatsApp más llamativo */
-        .whatsapp-button {
-            display: inline-block;
-            background-color: #25d366;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
+        .message.system-msg {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-style: italic;
+            background: none;
+            border: none;
+            padding: 3px 0;
+            max-width: 100%;
+        }
+
+        .message.code-display {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1.35rem;
             font-weight: 700;
-            font-size: 1.05em;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-align: center;
+            letter-spacing: 6px;
+            background: linear-gradient(145deg, #060d1c, #0c1730);
+            border: 1px dashed rgba(79,143,255,0.4);
+            color: #7eb8ff;
+            padding: 16px 20px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: inset 0 0 40px rgba(79,143,255,0.05);
+        }
+
+        .message ul { list-style: none; padding: 0; margin: 6px 0; }
+        .message ul li { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem; }
+        .message ul li:last-child { border: none; }
+        .message ul li strong { color: #7eb8ff; }
+        .message a { color: #7eb8ff; text-decoration: none; border-bottom: 1px solid rgba(126,184,255,0.28); transition: border-color 0.2s; }
+        .message a:hover { border-color: #7eb8ff; }
+        .message p { margin-bottom: 8px; }
+        .message p:last-child { margin-bottom: 0; }
+        .message hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 8px 0; }
+
+        /* Survey button inside message */
+        .survey-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(145deg, rgba(34,211,160,0.15), rgba(79,143,255,0.1));
+            border: 1px solid rgba(34,211,160,0.3);
+            color: #6ee7b7;
+            padding: 10px 18px;
+            border-radius: 24px;
+            text-decoration: none !important;
+            border-bottom: none !important;
+            font-weight: 700;
+            font-size: 0.83rem;
+            margin-top: 8px;
+            transition: all 0.22s;
+            cursor: pointer;
+        }
+        .survey-link:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,211,160,0.2); }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 12px 15px;
+            background: var(--bot-bubble);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 6px; height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typingBounce 1.3s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Quick replies */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 4px;
+        }
+
+        .quick-reply-btn {
+            background: rgba(79,143,255,0.09);
+            border: 1px solid rgba(79,143,255,0.22);
+            color: #93c5fd;
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 0.77rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .quick-reply-btn:hover { background: rgba(79,143,255,0.18); border-color: rgba(79,143,255,0.45); transform: scale(1.04); }
+
+        /* Input area */
+        .input-area {
+            padding: 10px 12px 12px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 20px;
+            padding: 5px 5px 5px 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-row:focus-within {
+            border-color: rgba(79,143,255,0.45);
+            box-shadow: 0 0 0 4px rgba(79,143,255,0.08);
+        }
+
+        .input-row input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem;
+            padding: 6px 0;
+        }
+
+        .input-row input::placeholder { color: var(--text-muted); }
+
+        .send-btn {
+            background: linear-gradient(145deg, var(--accent), var(--accent2));
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(79,143,255,0.32);
+        }
+        .send-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(79,143,255,0.42); }
+        .send-btn svg { width: 16px; height: 16px; color: white; }
+
+        /* Waiting spinner */
+        .advisor-waiting {
+            text-align: center;
+            padding: 16px 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        .advisor-waiting .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid rgba(79,143,255,0.15);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Live chat banner */
+        .live-chat-banner {
+            background: linear-gradient(135deg, rgba(34,211,160,0.09), rgba(79,143,255,0.08));
+            border: 1px solid rgba(34,211,160,0.22);
+            border-radius: 12px;
+            padding: 9px 13px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .whatsapp-button:hover {
-            background-color: #1da851;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .whatsapp-button:active {
-            transform: translateY(0);
-        }
-
-        .whatsapp-button::before {
-            content: '📞';
-            font-size: 1.2em;
-        }
-
-
-        /* Contenedor de Entrada */
-        .input-container {
-            display: flex;
-            padding: 15px 20px;
-            border-top: 1px solid #30363d;
-            background-color: #161b22;
-            gap: 10px;
-        }
-        .input-container input {
-            flex-grow: 1;
-            padding: 14px 20px;
-            border: 1px solid #555;
-            border-radius: 30px;
-            font-size: 1.05em;
-            background-color: #333;
-            color: white;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .input-container input:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.4);
-            background-color: #2b2b2b;
-        }
-        .input-container button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 1.05em;
+            gap: 9px;
+            font-size: 0.78rem;
+            color: #6ee7b7;
             font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        }
-        .input-container button:hover {
-            background-color: #0056b3;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        .input-container button:active {
-            transform: translateY(0);
         }
 
-        /* --- MEDIA QUERIES PARA ADAPTACIÓN MÓVIL --- */
-        @media (max-width: 768px) {
-            body {
-                align-items: flex-start;
-                min-height: auto;
-                padding: 0;
-            }
+        .live-dot {
+            width: 8px; height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulse-badge 1.5s infinite;
+        }
 
+        /* Data card (for new account info display) */
+        .data-card {
+            background: linear-gradient(145deg, #060e22, #091428);
+            border: 1px solid rgba(79,143,255,0.25);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 0.83rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+        .data-card .data-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: #7eb8ff;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .data-card .data-row { display: flex; gap: 8px; }
+        .data-card .data-label { color: var(--text-muted); min-width: 70px; }
+        .data-card .data-val { color: var(--text); font-weight: 600; }
+
+        /* ── MODALS ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.78);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 24px;
+            width: 390px;
+            max-width: 95vw;
+            max-height: 82vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #7eb8ff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 30px; height: 30px;
+            border-radius: 9px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+
+        .modal-body {
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        /* News cards */
+        .news-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 15px;
+            transition: border-color 0.2s;
+        }
+        .news-card:hover { border-color: rgba(79,143,255,0.28); }
+        .news-card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.91rem;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+        .news-card-body { font-size: 0.82rem; color: var(--text-dim); line-height: 1.55; }
+        .news-card-date { font-size: 0.7rem; color: var(--accent); margin-top: 7px; font-weight: 600; }
+        .no-news { text-align: center; color: var(--text-muted); font-size: 0.87rem; padding: 30px; }
+
+        /* Login form */
+        .form-group { display: flex; flex-direction: column; gap: 9px; }
+
+        .form-group label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            padding: 11px 14px;
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.92rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            border-color: rgba(79,143,255,0.5);
+            box-shadow: 0 0 0 4px rgba(79,143,255,0.08);
+        }
+
+        .form-hint {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-top: -4px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(145deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: all 0.25s;
+            box-shadow: 0 6px 20px rgba(79,143,255,0.3);
+            letter-spacing: 0.02em;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(79,143,255,0.4); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .form-error {
+            font-size: 0.79rem;
+            color: #f87171;
+            text-align: center;
+            display: none;
+            padding: 8px;
+            background: rgba(248,113,113,0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(248,113,113,0.2);
+        }
+
+        /* Confirm dialog */
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .confirm-overlay.open { display: flex; }
+        .confirm-box {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 20px;
+            padding: 24px;
+            width: 320px;
+            max-width: 92vw;
+            text-align: center;
+            animation: slideUp 0.3s cubic-bezier(0.34,1.2,0.64,1) both;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        .confirm-box p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.55;
+            margin-bottom: 18px;
+        }
+        .confirm-box strong { color: var(--text); }
+        .confirm-actions { display: flex; gap: 10px; }
+        .confirm-yes {
+            flex: 1;
+            background: rgba(240,108,108,0.15);
+            border: 1px solid rgba(240,108,108,0.35);
+            color: #f87171;
+            padding: 10px;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-yes:hover { background: rgba(240,108,108,0.25); }
+        .confirm-no {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text-dim);
+            padding: 10px;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-no:hover { background: var(--surface3); color: var(--text); }
+
+        @media (max-width: 480px) {
             .chat-container {
                 width: 100%;
-                height: 100vh;
-                max-width: 100%;
+                height: 100dvh;
+                max-height: none;
                 border-radius: 0;
-                box-shadow: none;
                 border: none;
-            }
-
-            .chat-header {
-                font-size: 1.4em;
-                padding: 18px 20px;
-                border-top-left-radius: 0;
-                border-top-right-radius: 0;
-            }
-
-            .chat-box {
-                padding: 15px;
-                gap: 10px;
-            }
-
-            .message {
-                padding: 10px 15px;
-                font-size: 0.95em;
-                max-width: 90%;
-            }
-
-            .input-container {
-                padding: 10px 15px;
-                gap: 8px;
-            }
-
-            .input-container input {
-                padding: 12px 18px;
-                font-size: 1em;
-            }
-
-            .input-container button {
-                padding: 12px 20px;
-                font-size: 1em;
-            }
-
-            .whatsapp-button {
-                padding: 10px 20px;
-                font-size: 0.95em;
-                margin-top: 10px;
-            }
-        }
-
-        /* Ajustes adicionales para pantallas muy pequeñas (ej. iPhone 5/SE) */
-        @media (max-width: 360px) {
-            .chat-header {
-                font-size: 1.3em;
-                padding: 15px;
-            }
-            .chat-box {
-                padding: 10px;
-            }
-            .message {
-                font-size: 0.9em;
-                padding: 8px 12px;
-            }
-            .input-container input,
-            .input-container button {
-                font-size: 0.9em;
-                padding: 10px 15px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <img src="https://i.postimg.cc/jq4kVY08/Whats-App-Image-2025-08-02-at-10-16-08-AM.jpg" class="profile-pic">
-            <div class="profile-info">
-                <h3>Soporte Oficial Llutid+</h3>
-                <p>En línea • Asistente Virtual</p>
+<!-- ═══════════════ MODAL NOVEDADES ═══════════════ -->
+<div class="modal-overlay" id="newsModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">✨ Novedades Llutid+</span>
+            <button class="modal-close" onclick="closeNewsModal()">✕</button>
+        </div>
+        <div class="modal-body" id="newsList">
+            <div class="no-news">Cargando novedades...</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════ MODAL VERIFICACIÓN ═══════════════ -->
+<div class="modal-overlay" id="advisorModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">🔐 Accede a tu cuenta</span>
+            <button class="modal-close" onclick="closeAdvisorModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.82rem; color:var(--text-muted);">
+                Ingresa los datos con los que creaste tu cuenta Llutid+ para conectarte con un asesor.
+            </p>
+            <div class="form-group">
+                <label>Correo electrónico</label>
+                <input type="email" id="advisorEmail" placeholder="tu@correo.com" autocomplete="email">
+                <label>Contraseña / PIN</label>
+                <input type="password" id="advisorPin" placeholder="Tu contraseña o PIN" autocomplete="current-password">
+                <div class="form-hint">Si olvidaste tu contraseña, escribe <strong>1</strong> en el chat para recuperarla.</div>
+                <div class="form-error" id="loginError"></div>
+                <button class="submit-btn" id="loginSubmitBtn" onclick="verifyAdvisor()">
+                    Verificar identidad →
+                </button>
             </div>
         </div>
-        <div class="chat-box" id="chat-box">
+    </div>
+</div>
+
+<!-- ═══════════════ CONFIRMAR FINALIZAR CHAT ═══════════════ -->
+<div class="confirm-overlay" id="confirmEndChat">
+    <div class="confirm-box">
+        <p>¿Estás seguro de que quieres <strong>finalizar el chat</strong> con el asesor?</p>
+        <div class="confirm-actions">
+            <button class="confirm-yes" onclick="confirmEndChat()">Sí, finalizar</button>
+            <button class="confirm-no" onclick="cancelEndChat()">Seguir chateando</button>
         </div>
-        <div class="input-container">
-            <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
-            <button id="send-button">Enviar</button>
+    </div>
+</div>
+
+<!-- ═══════════════ CHAT CONTAINER ═══════════════ -->
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="avatar-wrap">
+            <img src="https://i.postimg.cc/jq4kVY08/Whats-App-Image-2025-08-02-at-10-16-08-AM.jpg"
+                 class="avatar"
+                 onerror="this.style.display='none'">
+            <div class="avatar-badge"></div>
+        </div>
+        <div class="header-info">
+            <div class="header-name" id="headerName">Cebrid · Llutid+</div>
+            <div class="header-status" id="headerStatus">
+                <span style="width:6px;height:6px;background:var(--success);border-radius:50%;flex-shrink:0;"></span>
+                En línea · Asistente Virtual
+            </div>
+        </div>
+        <span class="header-brand">L+</span>
+        <div class="header-actions">
+            <button class="end-chat-btn" id="endChatBtn" onclick="requestEndChat()">✕ Finalizar</button>
+            <button class="news-btn" onclick="openNewsModal()">
+                <span class="dot"></span>Novedades
+            </button>
         </div>
     </div>
 
-    <script>
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
+    <div class="chat-box" id="chat-box"></div>
 
-        // ** Datos de ejemplo para usuarios (en un caso real, vendrían de una DB) **
-        const usersDB = [
-            { fullName: 'JUAN PEREZ GOMEZ', phoneNumber: '3101234567' },
-            { fullName: 'FELIPE HIDALGO', phoneNumber: '3170241150' },
-            { fullName: 'LLUTID', phoneNumber: '3181087834' },
-            { fullName: 'ANDRES REYES', phoneNumber: '3244779032' },
-            { fullName: 'JHONATAN PEREZ', phoneNumber: '3154103024' },
-            { fullName: 'RICARDO GIRALDO', phoneNumber: '3508591280' },
-            { fullName: 'MATEO BUSTOS', phoneNumber: '3243724956' },
-            { fullName: 'YEFERSON STIVEN', phoneNumber: '3106307450' },
-            { fullName: 'CARLOS RODRIGUEZ SANCHEZ', phoneNumber: '3125551234' },
-            { fullName: 'ANDERSON', phoneNumber: '3181087834' }
-        ];
+    <div class="input-area">
+        <div class="input-row">
+            <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+            <button class="send-btn" id="send-button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
 
-        let conversationState = 'awaiting_greeting'; // Nuevo estado inicial para esperar el saludo
-        let currentUser = null; // Guardar el usuario que se está verificando
-        let currentRequestType = ''; // 'password_change', 'email_change', 'login_issue', 'new_account_request', 'support_feedback'
-        let generatedCode = ''; // Almacena el código de verificación generado
+<!-- ═══════════════ FIREBASE ═══════════════ -->
+<script type="module">
+import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut }
+                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+    getFirestore, collection, addDoc, onSnapshot,
+    query, orderBy, doc, getDoc, updateDoc,
+    serverTimestamp, where, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // Para el flujo de registro de Llutid+
-        let newAccountData = {
-            fullName: '',
-            email: '',
-            phoneNumber: ''
+/* ── Firebase Init ── */
+const firebaseConfig = {
+    apiKey:            "AIzaSyBUaTunBig1_8LQgQmCND4Sm6m_s6E0FSs",
+    authDomain:        "llutid-18d26.firebaseapp.com",
+    projectId:         "llutid-18d26",
+    storageBucket:     "llutid-18d26.firebasestorage.app",
+    messagingSenderId: "900505351564",
+    appId:             "1:900505351564:web:e71805939e3488170652a9",
+    measurementId:     "G-VL8X5NWH1S"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* ── Constants ── */
+const LLUTID_EMAIL   = 'llutidoficial@gmail.com';
+const LLUTID_PLANS   = 'https://llutid.github.io/llutid-/';
+const BUG_FORM       = 'https://forms.gle/FwNG8E6yTBNB4MCf9';
+const SURVEY_URL     = 'https://docs.google.com/forms/d/e/1FAIpQLSdLZ-7K1676gQByJWLADar3zSnZaLmecwNnrxA8mmVbQz3jmw/viewform?usp=header';
+
+/* ── State ── */
+let state           = 'awaiting_greeting'; // conversation state
+let currentUser     = null;                // verified Firestore user data
+let currentReqType  = '';                  // type of request
+let generatedCode   = '';                  // verification code
+let newAccData      = {};                  // new account form data
+let userFeedback    = '';
+let liveSessionId   = null;
+let isLiveChat      = false;
+let liveConnected   = false;               // true once advisor accepts
+let liveEnded       = false;               // true once chat finalized
+let unsubLiveChat   = null;
+
+/* ── DOM ── */
+const chatBox    = document.getElementById('chat-box');
+const userInput  = document.getElementById('user-input');
+const sendButton = document.getElementById('send-button');
+const headerName = document.getElementById('headerName');
+const headerStat = document.getElementById('headerStatus');
+const endChatBtn = document.getElementById('endChatBtn');
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function greeting() {
+    const h = new Date().getHours();
+    return h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+}
+
+function genCode() {
+    const L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return `${L[Math.floor(Math.random()*26)]}${Math.floor(10000+Math.random()*90000)}53`;
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function scrollEnd() {
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+/** Append a message bubble. Returns the bubble element. */
+function addMsg(html, sender, extra = '') {
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + (sender === 'user' ? 'user' : 'bot-row');
+
+    if (sender === 'bot' && extra !== 'no-icon') {
+        const icon = document.createElement('div');
+        icon.className = 'bot-icon';
+        icon.textContent = liveConnected ? '👤' : '🤖';
+        row.appendChild(icon);
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'message ' + (
+        sender === 'user'   ? 'user'       :
+        sender === 'system' ? 'system-msg' : 'bot'
+    );
+    if (extra === 'code') bubble.classList.add('code-display');
+
+    // Render as HTML if it contains tags (bot only)
+    if (sender === 'bot' && /<[a-z][\s\S]*>/i.test(html)) {
+        bubble.innerHTML = html;
+    } else {
+        bubble.textContent = html;
+    }
+
+    row.appendChild(bubble);
+    chatBox.appendChild(row);
+    scrollEnd();
+    return bubble;
+}
+
+function showTyping() {
+    if (document.getElementById('typingRow')) return;
+    const row = document.createElement('div');
+    row.className = 'msg-row bot-row';
+    row.id = 'typingRow';
+    const icon = document.createElement('div');
+    icon.className = 'bot-icon';
+    icon.textContent = '🤖';
+    row.appendChild(icon);
+    const ind = document.createElement('div');
+    ind.className = 'typing-indicator';
+    for (let i=0;i<3;i++) {
+        const d = document.createElement('div');
+        d.className = 'typing-dot';
+        ind.appendChild(d);
+    }
+    row.appendChild(ind);
+    chatBox.appendChild(row);
+    scrollEnd();
+}
+
+function removeTyping() {
+    document.getElementById('typingRow')?.remove();
+}
+
+function addQuickReplies(opts) {
+    const wrap = document.createElement('div');
+    wrap.className = 'quick-replies';
+    opts.forEach(o => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-reply-btn';
+        btn.textContent = o.label;
+        btn.onclick = () => {
+            userInput.value = o.value || o.label;
+            sendMessage();
         };
+        wrap.appendChild(btn);
+    });
+    chatBox.appendChild(wrap);
+    scrollEnd();
+}
 
-        // Para el flujo de soporte y quejas
-        let userFeedback = '';
+function getUserName(u) {
+    return (u?.nombre || u?.fullName || u?.displayName || 'Usuario').trim();
+}
 
-        // --- Configuración de Información de Contacto de Llutid ---
-        const LLUTID_WHATSAPP_PHONE = '+573181087834'; // Número de WhatsApp para contacto con asesor
-        const LLUTID_SUPPORT_PHONE = '+573181087834'; // Línea telefónica de Llutid
-        const LLUTID_SUPPORT_EMAIL = 'llutidoficial@gmail.com'; // Correo electrónico oficial de Llutid
-        // --- URLs de ejemplo (reemplaza con las URLs reales de tu sitio web) ---
-        const LLUTID_REGISTER_URL = 'https://www.llutid.com/registro';
-        const LLUTID_ABOUT_URL = 'https://www.llutid.com/quienes-somos';
-        const LLUTID_PLANS_URL = 'https://llutid.github.io/llutid-/';
-        const LLUTID_HELP_URL = 'https://www.llutid.com/ayuda';
-        // --- URL del formulario de reporte de errores ---
-        const LLUTID_BUG_REPORT_FORM = 'https://forms.gle/FwNG8E6yTBNB4MCf9';
+function getUserPhone(u) {
+    return (u?.telefono || u?.phoneNumber || '').trim();
+}
 
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+/* ── Header helpers ── */
+function setHeaderLive(advisorName) {
+    headerName.textContent = advisorName ? `Asesor: ${advisorName}` : 'Asesor Llutid+';
+    headerStat.innerHTML = `
+        <span style="width:6px;height:6px;background:var(--warning);border-radius:50%;flex-shrink:0;animation:pulse-badge 1.5s infinite;"></span>
+        Chat en vivo
+    `;
+    headerStat.classList.add('live');
+    endChatBtn.classList.add('visible');
+}
+
+function resetHeader() {
+    headerName.textContent = 'Cebrid · Llutid+';
+    headerStat.innerHTML = `
+        <span style="width:6px;height:6px;background:var(--success);border-radius:50%;flex-shrink:0;"></span>
+        En línea · Asistente Virtual
+    `;
+    headerStat.classList.remove('live');
+    endChatBtn.classList.remove('visible');
+}
+
+/* ═══════════════════════════════════════════
+   NOVEDADES
+═══════════════════════════════════════════ */
+async function loadNews() {
+    const list = document.getElementById('newsList');
+    try {
+        const q    = query(collection(db, 'novedades'), orderBy('fecha', 'desc'));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+            list.innerHTML = '<div class="no-news">😊 No hay novedades por ahora. ¡Vuelve pronto!</div>';
+            return;
+        }
+        list.innerHTML = '';
+        snap.forEach(docSnap => {
+            const d    = docSnap.data();
+            const card = document.createElement('div');
+            card.className = 'news-card';
+            const fecha = d.fecha?.toDate
+                ? d.fecha.toDate().toLocaleDateString('es-CO', {day:'2-digit',month:'short',year:'numeric'})
+                : '';
+            card.innerHTML = `
+                <div class="news-card-title">${d.titulo || 'Sin título'}</div>
+                <div class="news-card-body">${d.contenido || ''}</div>
+                <div class="news-card-date">${fecha}</div>
+            `;
+            list.appendChild(card);
         });
+    } catch(e) {
+        list.innerHTML = '<div class="no-news">No se pudieron cargar las novedades.</div>';
+    }
+}
 
-        // Función para añadir mensajes al chat
-        function appendMessage(text, sender, className = '') {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender);
-            if (className) {
-                messageDiv.classList.add(className);
+window.openNewsModal  = () => { document.getElementById('newsModal').classList.add('open'); loadNews(); };
+window.closeNewsModal = () => document.getElementById('newsModal').classList.remove('open');
+
+/* ═══════════════════════════════════════════
+   VERIFICACIÓN — FIREBASE AUTH
+   El correo y la contraseña/PIN están en
+   Firebase Authentication (no solo Firestore).
+═══════════════════════════════════════════ */
+window.openAdvisorModal = function() {
+    document.getElementById('advisorModal').classList.add('open');
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('advisorEmail').value = '';
+    document.getElementById('advisorPin').value   = '';
+    document.getElementById('loginSubmitBtn').disabled = false;
+};
+window.closeAdvisorModal = () => document.getElementById('advisorModal').classList.remove('open');
+
+window.verifyAdvisor = async function() {
+    const email    = document.getElementById('advisorEmail').value.trim().toLowerCase();
+    const password = document.getElementById('advisorPin').value.trim();
+    const errEl    = document.getElementById('loginError');
+    const btn      = document.getElementById('loginSubmitBtn');
+
+    if (!email || !password) {
+        errEl.textContent = '⚠️ Completa los dos campos para continuar.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+
+    try {
+        /* 1. Autenticar con Firebase Authentication */
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        const fbUser     = credential.user;
+
+        /* 2. Obtener datos de perfil desde Firestore */
+        let userData = { email: fbUser.email, nombre: fbUser.displayName || '' };
+
+        // Primero intentar por uid (lo más preciso)
+        const byUid = await getDoc(doc(db, 'usuarios', fbUser.uid));
+        if (byUid.exists()) {
+            userData = { id: fbUser.uid, ...byUid.data() };
+        } else {
+            // Fallback: buscar por email en la colección
+            const q    = query(collection(db, 'usuarios'), where('email', '==', email));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                userData = { id: snap.docs[0].id, ...snap.docs[0].data() };
             }
-            // Usa innerHTML si el texto contiene etiquetas HTML (como listas, negritas, enlaces)
-            if (sender === 'bot' && (text.includes('<ul>') || text.includes('<a href=') || text.includes('<p>') || text.includes('<strong>') || text.includes('<div>'))) {
-                messageDiv.innerHTML = text;
-            } else {
-                messageDiv.textContent = text;
-            }
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll al final
         }
 
-        // Función para mostrar el indicador de "escribiendo..."
-        function showTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.classList.add('message', 'system');
-            typingDiv.id = 'typing-indicator';
-            typingDiv.textContent = 'El asistente está escribiendo...';
-            chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+        /* 3. Cerrar sesión (solo necesitábamos verificar) */
+        await signOut(auth);
+
+        /* 4. Iniciar flujo de chat con asesor */
+        closeAdvisorModal();
+        await startLiveChat(userData);
+
+    } catch(e) {
+        btn.disabled = false;
+        btn.textContent = 'Verificar identidad →';
+
+        const code = e.code || '';
+        if (code.includes('wrong-password') || code.includes('invalid-credential') ||
+            code.includes('user-not-found') || code.includes('invalid-email')) {
+            errEl.textContent = '❌ Correo o contraseña incorrectos. Verifica tus datos.';
+        } else if (code.includes('too-many-requests')) {
+            errEl.textContent = '⚠️ Demasiados intentos. Espera unos minutos e intenta de nuevo.';
+        } else {
+            errEl.textContent = '❌ Error de conexión. Intenta más tarde.';
+            console.error('Auth error:', e);
+        }
+        errEl.style.display = 'block';
+    }
+};
+
+/* ═══════════════════════════════════════════
+   CHAT EN VIVO — CORE
+═══════════════════════════════════════════ */
+
+/**
+ * Crea una sesión en Firestore y espera a que un asesor la acepte.
+ * @param {object} userData - datos del usuario (nombre, email, telefono, etc.)
+ * @param {object} extraData - datos adicionales para el asesor (ej. nueva cuenta)
+ */
+async function startLiveChat(userData, extraData = {}) {
+    const nombre  = getUserName(userData);
+    const telefono = getUserPhone(userData);
+
+    // Crear sesión en Firestore con TODOS los datos visibles para el asesor
+    const sessionPayload = {
+        email:         userData.email || '',
+        nombre:        nombre,
+        telefono:      telefono,
+        estado:        'esperando',
+        timestamp:     serverTimestamp(),
+        mensajes:      [],
+        tipoSolicitud: currentReqType || 'consulta general',
+        ultimaConexion: serverTimestamp(),
+        uid:           userData.id || null,
+        ...extraData     // datos extra (nueva cuenta, etc.)
+    };
+
+    const sessionRef  = await addDoc(collection(db, 'sesiones_asesor'), sessionPayload);
+    liveSessionId     = sessionRef.id;
+    isLiveChat        = true;
+    liveConnected     = false;
+    liveEnded         = false;
+
+    addMsg(`✅ Identidad verificada. ¡Hola, <strong>${nombre}</strong>!`, 'bot');
+    await delay(500);
+
+    // Mostrar spinner de espera
+    const waitDiv       = document.createElement('div');
+    waitDiv.className   = 'advisor-waiting';
+    waitDiv.id          = 'waitDiv';
+    waitDiv.innerHTML   = `
+        <div class="spinner"></div>
+        <p style="color:var(--text-muted);font-size:0.83rem;margin-bottom:4px;">
+            Conectando con un asesor disponible…
+        </p>
+        <span style="font-size:0.74rem;opacity:0.6;">Tiempo estimado: menos de 5 minutos</span>
+    `;
+    chatBox.appendChild(waitDiv);
+    scrollEnd();
+
+    listenLiveChat();
+
+    // Timeout 30 min
+    setTimeout(() => {
+        if (!liveConnected && !liveEnded && document.getElementById('waitDiv')) {
+            document.getElementById('waitDiv')?.remove();
+            addMsg(`⏰ El tiempo de espera superó los 30 minutos.<br><br>
+                Puedes escribirnos directamente:<br>
+                📧 <a href="mailto:${LLUTID_EMAIL}">${LLUTID_EMAIL}</a><br>
+                <span style="font-size:0.78rem;color:var(--text-muted)">Lun–Vie 9AM–6PM · Sáb 9AM–1PM</span>`,
+            'bot');
+            cleanupLiveChat(false);
+        }
+    }, 30 * 60 * 1000);
+}
+
+/** Escucha los cambios de la sesión en Firestore en tiempo real */
+function listenLiveChat() {
+    if (!liveSessionId) return;
+    const sessionRef = doc(db, 'sesiones_asesor', liveSessionId);
+
+    unsubLiveChat = onSnapshot(sessionRef, (snap) => {
+        const data = snap.data();
+        if (!data) return;
+
+        /* ── El asesor aceptó el chat ── */
+        if (data.estado === 'activo' && !liveConnected) {
+            liveConnected = true;
+            document.getElementById('waitDiv')?.remove();
+
+            // Nombre del asesor (el admin debe guardar este campo al aceptar)
+            const advisorName = data.nombreAsesor || 'Asesor';
+
+            // Banner de conexión
+            const banner     = document.createElement('div');
+            banner.className = 'live-chat-banner';
+            banner.id        = 'liveBanner';
+            banner.innerHTML = `<div class="live-dot"></div>
+                <span>En contacto con <strong>${advisorName}</strong> · Chat en vivo</span>`;
+            chatBox.appendChild(banner);
+            scrollEnd();
+
+            // Actualizar header
+            setHeaderLive(advisorName);
+
+            // Saludo del asesor
+            addMsg(
+                `👋 ¡Hola! Soy <strong>${advisorName}</strong>, asesor de Llutid+. ¿En qué te puedo ayudar hoy?`,
+                'bot'
+            );
         }
 
-        // Función para remover el indicador de "escribiendo..."
-        function removeTypingIndicator() {
-            const typingDiv = document.getElementById('typing-indicator');
-            if (typingDiv) {
-                typingDiv.remove();
-            }
+        /* ── El asesor finalizó el chat desde el panel admin ── */
+        if ((data.estado === 'finalizado' || data.estado === 'cerrado') && liveConnected && !liveEnded) {
+            endLiveChatSession('asesor');
         }
 
-        // Genera un código aleatorio con el formato LNNNNN53
-        function generateRandomCode() {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const randomChar = characters.charAt(Math.floor(Math.random() * characters.length));
-            let randomDigits = '';
-            for (let i = 0; i < 5; i++) { // 5 dígitos aleatorios
-                randomDigits += Math.floor(Math.random() * 10);
-            }
-            return `${randomChar}${randomDigits}53`;
+        /* ── Nuevos mensajes del asesor ── */
+        if (Array.isArray(data.mensajes)) {
+            const rendered = new Set(
+                [...chatBox.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId)
+            );
+            data.mensajes.forEach(msg => {
+                if (msg.de === 'asesor' && !rendered.has(msg.id)) {
+                    const bubble = addMsg(msg.texto, 'bot');
+                    bubble.parentElement.dataset.msgId = msg.id;
+                }
+            });
         }
+    });
+}
 
-        // Obtiene el saludo según la hora del día
-        function getGreeting() {
-            const hour = new Date().getHours();
-            if (hour < 12) {
-                return 'Buenos días';
-            } else if (hour < 19) {
-                return 'Buenas tardes';
-            } else {
-                return 'Buenas noches';
-            }
-        }
+/** Envía un mensaje del usuario al asesor en Firestore */
+async function sendLiveMsg(text) {
+    if (!liveSessionId) return;
+    try {
+        const ref  = doc(db, 'sesiones_asesor', liveSessionId);
+        const snap = await getDoc(ref);
+        const msgs = snap.data()?.mensajes || [];
+        msgs.push({
+            id:    Date.now().toString(),
+            de:    'usuario',
+            texto: text,
+            hora:  new Date().toISOString()
+        });
+        await updateDoc(ref, { mensajes: msgs, ultimoMensaje: serverTimestamp() });
+    } catch(e) {
+        console.error('Error enviando mensaje:', e);
+    }
+}
 
-        // Muestra el mensaje de bienvenida inicial
-        async function displayInitialWelcomeMessage() {
-            const greeting = getGreeting();
-            appendMessage(`¡${greeting}! 👋 Soy Cebrid, tu asistente virtual de Llutid+.`, 'bot');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            appendMessage('Estoy aquí para ayudarte con cualquier consulta o problema que tengas. Para empezar, solo escríbeme lo que necesites o un saludo como **"Hola"**.', 'bot');
-            conversationState = 'awaiting_greeting'; // Establece el estado para esperar un mensaje del usuario
-        }
+/* ── Finalizar chat ── */
+window.requestEndChat = function() {
+    document.getElementById('confirmEndChat').classList.add('open');
+};
+window.cancelEndChat = function() {
+    document.getElementById('confirmEndChat').classList.remove('open');
+};
+window.confirmEndChat = async function() {
+    document.getElementById('confirmEndChat').classList.remove('open');
+    await endLiveChatSession('usuario');
+};
 
-        // Muestra el menú de opciones (principal)
-        async function showMenu(fromReturn = false) { // fromReturn para controlar el mensaje inicial
-            if (!fromReturn) { // Solo muestra este mensaje si no viene de una opción de "volver"
-                appendMessage('¡Excelente! ¿En qué puedo ayudarte hoy? ✨', 'bot');
-                await new Promise(resolve => setTimeout(resolve, 800));
-            }
+async function endLiveChatSession(by = 'usuario') {
+    if (liveEnded) return;
+    liveEnded = true;
 
-            const menuHtml = `
-                <p>Por favor, selecciona una de las siguientes opciones ingresando el **número** correspondiente:</p>
+    // Actualizar estado en Firestore
+    if (liveSessionId) {
+        try {
+            await updateDoc(doc(db, 'sesiones_asesor', liveSessionId), {
+                estado:        'finalizado',
+                finalizadoPor: by,
+                finalizadoEn:  serverTimestamp()
+            });
+        } catch(e) { /* continue anyway */ }
+    }
+
+    // Limpiar estado local
+    cleanupLiveChat(true);
+
+    // Quitar banner
+    document.getElementById('liveBanner')?.remove();
+
+    // Mensaje de despedida + encuesta
+    if (by === 'usuario') {
+        addMsg(`👋 Chat finalizado. ¡Esperamos haberte podido ayudar!<br><br>
+            ¿Nos regalas un minuto para contarnos tu experiencia?<br>
+            <a class="survey-link" href="${SURVEY_URL}" target="_blank">📋 Responder encuesta de satisfacción</a>`,
+        'bot');
+    } else {
+        addMsg(`👋 El asesor ha finalizado el chat. ¡Gracias por contactar a Llutid+!<br><br>
+            Tu opinión nos ayuda a mejorar:<br>
+            <a class="survey-link" href="${SURVEY_URL}" target="_blank">📋 Responder encuesta de satisfacción</a>`,
+        'bot');
+    }
+
+    await delay(1200);
+    resetHeader();
+
+    addMsg('¿Hay algo más en lo que pueda ayudarte? Escribe <strong>Menú</strong> para ver las opciones.', 'bot');
+    state = 'initial_menu';
+}
+
+function cleanupLiveChat(keepId = false) {
+    if (unsubLiveChat) { unsubLiveChat(); unsubLiveChat = null; }
+    isLiveChat    = false;
+    liveConnected = false;
+    if (!keepId) liveSessionId = null;
+    endChatBtn.classList.remove('visible');
+}
+
+/* ═══════════════════════════════════════════
+   SEND MESSAGE — ROUTER PRINCIPAL
+═══════════════════════════════════════════ */
+sendButton.addEventListener('click', sendMessage);
+userInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+async function sendMessage() {
+    const raw = userInput.value.trim();
+    if (!raw) return;
+
+    addMsg(raw, 'user');
+    userInput.value = '';
+
+    /* En chat en vivo: reenviar al asesor */
+    if (isLiveChat) {
+        await sendLiveMsg(raw);
+        return;
+    }
+
+    showTyping();
+    await delay(650);
+    removeTyping();
+
+    const norm = raw.toLowerCase();
+
+    /* Comandos globales */
+    if (['adiós','adios','chao','hasta luego','bye'].some(w => norm.includes(w))) {
+        addMsg('¡Hasta luego! 👋 Fue un placer atenderte. Aquí estaré cuando me necesites.', 'bot');
+        state = 'awaiting_greeting';
+        return;
+    }
+    if (['gracias','muchas gracias','mil gracias'].some(w => norm.includes(w))) {
+        addMsg('¡Con gusto! 😊 ¿Hay algo más en lo que pueda ayudarte?', 'bot');
+        return;
+    }
+    if (['menu','menú','0','inicio','opciones'].some(w => norm === w || norm.includes(w))) {
+        await showMenu(true);
+        return;
+    }
+    if (norm === 'novedades') { openNewsModal(); return; }
+
+    /* Router por estado */
+    let response = '';
+    switch (state) {
+        case 'awaiting_greeting':    await showMenu(); break;
+        case 'initial_menu':         response = await handleMenu(raw); break;
+        case 'sub_menu_1':           response = await handleSubMenu1(raw); break;
+        case 'awaiting_full_name':   response = await handleFullName(raw); break;
+        case 'awaiting_phone':       response = await handlePhone(raw); break;
+        case 'awaiting_code':        response = await handleCode(raw); break;
+        case 'new_account_name':     response = await handleNewName(raw); break;
+        case 'new_account_email':    response = await handleNewEmail(raw); break;
+        case 'new_account_phone':    response = await handleNewPhone(raw); break;
+        case 'faq':                  response = await handleFAQ(raw); break;
+        case 'awaiting_feedback':    response = await handleFeedback(raw); break;
+        case 'confirm_feedback':     response = await handleConfirmFeedback(raw); break;
+        case 'login_issue':          response = await handleLoginIssue(raw); break;
+        default:
+            response = 'No entendí eso 🤔. Escribe <strong>Menú</strong> para ver las opciones disponibles.';
+    }
+
+    if (response) addMsg(response, 'bot');
+}
+
+/* ═══════════════════════════════════════════
+   MENÚ PRINCIPAL
+═══════════════════════════════════════════ */
+async function showMenu(fromReturn = false) {
+    if (!fromReturn) {
+        addMsg(`¡${greeting()}! ✨ ¿En qué puedo ayudarte hoy?`, 'bot');
+        await delay(400);
+    } else {
+        addMsg('Aquí están todas las opciones disponibles:', 'bot');
+        await delay(300);
+    }
+
+    addMsg(`
+        <p style="font-weight:700;margin-bottom:10px;">¿Qué necesitas?</p>
+        <ul>
+            <li><strong>1.</strong> Problemas con mi cuenta o al iniciar sesión</li>
+            <li><strong>2.</strong> Quiero crear una cuenta Llutid+</li>
+            <li><strong>3.</strong> ¿Qué es Llutid+?</li>
+            <li><strong>4.</strong> Preguntas frecuentes</li>
+            <li><strong>5.</strong> Soporte, quejas o sugerencias</li>
+            <li><strong>6.</strong> Hablar con un asesor</li>
+            <li><strong>7.</strong> Cancelar mi cuenta</li>
+            <li><strong>8.</strong> Reportar un error técnico</li>
+            <li><strong>9.</strong> Adquirir un plan</li>
+            <li><strong>📰</strong> Novedades → escribe <em>novedades</em></li>
+        </ul>
+    `, 'bot');
+
+    addQuickReplies([
+        {label:'1. Mi cuenta',       value:'1'},
+        {label:'2. Crear cuenta',    value:'2'},
+        {label:'6. Hablar asesor',   value:'6'},
+        {label:'9. Ver planes',      value:'9'},
+        {label:'📰 Novedades',       value:'novedades'},
+    ]);
+    state = 'initial_menu';
+}
+
+/* ═══════════════════════════════════════════
+   HANDLE MENU
+═══════════════════════════════════════════ */
+async function handleMenu(msg) {
+    const n = msg.trim();
+
+    switch (n) {
+        case '1':
+            state = 'sub_menu_1';
+            return `<p><strong>Problemas con la cuenta</strong> — cuéntame qué pasó:</p>
                 <ul>
-                    <li><strong>1.</strong> Problemas con mi cuenta o al iniciar sesión.</li>
-                    <li><strong>2.</strong> Quiero ser parte de la familia Llutid+ / Obtener una cuenta.</li>
-                    <li><strong>3.</strong> ¿Qué es Llutid+?</li>
-                    <li><strong>4.</strong> Preguntas frecuentes.</li>
-                    <li><strong>5.</strong> Soporte de problemas, quejas o sugerencias.</li>
-                    <li><strong>6.</strong> Hablar con un asesor.</li>
-                    <li><strong>7.</strong> Cancelación de cuenta.</li>
-                    <li><strong>8.</strong> Reportar un error técnico de la plataforma.</li>
-                </ul>
-                <p>Si en algún momento quieres volver a este menú, simplemente escribe **"Menú"** o el **número 0**.</p>
-            `;
-            appendMessage(menuHtml, 'bot');
-            conversationState = 'initial_menu'; // Establece el estado para esperar la selección del menú
-        }
+                    <li><strong>1.</strong> Olvidé mi contraseña o PIN</li>
+                    <li><strong>2.</strong> Necesito cambiar mi correo</li>
+                    <li><strong>3.</strong> No puedo iniciar sesión</li>
+                    <li><strong>4.</strong> Otro problema</li>
+                </ul>`;
 
-        // Función principal para manejar los mensajes del usuario
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (message === '') return;
+        case '2':
+            currentReqType  = 'nueva cuenta';
+            newAccData      = {};
+            state           = 'new_account_name';
+            return '¡Perfecto! 🎉 Para crear tu cuenta vamos a necesitar algunos datos.<br><br>Primero, ¿cuál es tu <strong>nombre completo</strong>?';
 
-            appendMessage(message, 'user');
-            userInput.value = '';
-            showTypingIndicator(); // Mostrar indicador de "escribiendo"
+        case '3':
+            return `<p><strong>¿Qué es Llutid+?</strong> 🎬</p>
+                <p>Somos una plataforma de streaming con películas, series y contenido en vivo — con planes desde <strong>$2.500 COP</strong>. Fácil, económica y con soporte siempre disponible.</p>
+                <p><a href="${LLUTID_PLANS}" target="_blank">👉 Ver todos los planes</a></p>`;
 
-            await new Promise(resolve => setTimeout(resolve, 800)); // Simular tiempo de procesamiento
-
-            let botResponse = '';
-            const normalizedMessage = message.toLowerCase();
-
-            // *** MEJORA: Manejo de saludos y despedidas ***
-            if (['adiós', 'chao', 'hasta luego', 'bye'].some(word => normalizedMessage.includes(word))) {
-                removeTypingIndicator();
-                appendMessage('¡Adiós! Que tengas un excelente día. Si necesitas algo más, no dudes en volver a contactarnos. 👋', 'bot');
-                conversationState = 'awaiting_greeting'; // Reinicia el estado para un nuevo saludo
-                return;
-            }
-
-            // *** MEJORA: Manejo de agradecimientos ***
-            if (['gracias', 'muchas gracias', 'mil gracias'].some(word => normalizedMessage.includes(word))) {
-                removeTypingIndicator();
-                appendMessage('De nada, ¡es un placer ayudarte! Si necesitas algo más, no dudes en volver a contactarnos. 😊', 'bot');
-                return;
-            }
-
-            // Manejo global de "Menú" o "0" (para volver al menú principal)
-            if (normalizedMessage === 'menu' || normalizedMessage === '0') {
-                removeTypingIndicator();
-                await showMenu(true); // Pasar true para evitar el mensaje de "Excelente..." repetitivo
-                return;
-            }
-
-
-            // Lógica principal del chatbot
-            switch (conversationState) {
-                case 'awaiting_greeting':
-                    removeTypingIndicator();
-                    await showMenu();
-                    break;
-                case 'initial_menu':
-                    // Si ya se manejó por palabras clave, no hacer nada aquí
-                    if (!botResponse) {
-                        botResponse = await handleInitialMenuSelection(message);
-                    }
-                    break;
-                case 'sub_menu_1': // Problemas con la cuenta o login
-                    botResponse = await handleSubMenu1Selection(message);
-                    break;
-                case 'awaiting_full_name':
-                    botResponse = await handleFullName(message);
-                    break;
-                case 'awaiting_phone_number':
-                    botResponse = await handlePhoneNumber(message);
-                    break;
-                case 'awaiting_security_code':
-                    botResponse = await handleSecurityCode(message);
-                    break;
-                case 'new_account_name':
-                    botResponse = await handleNewAccountName(message);
-                    break;
-                case 'new_account_email':
-                    botResponse = await handleNewAccountEmail(message);
-                    break;
-                case 'new_account_phone':
-                    botResponse = await handleNewAccountPhone(message);
-                    break;
-                case 'faq_section_expanded':
-                    botResponse = await handleFAQSectionExpanded(message);
-                    break;
-                case 'awaiting_user_feedback':
-                    botResponse = await handleUserFeedbackInput(message);
-                    break;
-                case 'confirm_send_feedback':
-                    botResponse = await handleConfirmSendFeedback(message);
-                    break;
-                case 'sub_menu_1_login_issue': // Nuevo estado para manejar las opciones de este sub-menú
-                    botResponse = await handleLoginIssueSelection(message);
-                    break;
-                default:
-                    // *** MEJORA: Mensaje de fallback más amigable ***
-                    botResponse = 'Lo siento, no pude entender tu solicitud en este momento. Si necesitas ayuda, por favor, selecciona una opción del menú principal escribiendo el número correspondiente, o escribe **"Menú"** o el **"0"** para ver todas las opciones disponibles. 🤔';
-                    break;
-            }
-            removeTypingIndicator();
-            if (botResponse) {
-                appendMessage(botResponse, 'bot');
-            }
-        }
-
-        async function handleInitialMenuSelection(userMessage) {
-            const normalizedMessage = userMessage.trim();
-            let response = '';
-
-            switch (normalizedMessage) {
-                case '1':
-                    conversationState = 'sub_menu_1';
-                    response = `
-                        <p>Has seleccionado la opción **"Problemas con mi cuenta o al iniciar sesión"**.</p>
-                        <p>Para poder ayudarte de la mejor manera, por favor, elige la opción que mejor describe tu situación ingresando el **número** correspondiente:</p>
-                        <ul>
-                            <li><strong>1.</strong> Se me olvidó la contraseña / PIN.</li>
-                            <li><strong>2.</strong> Quiero cambiar mi correo electrónico.</li>
-                            <li><strong>3.</strong> No puedo ingresar a mi cuenta / No funciona el login.</li>
-                            <li><strong>4.</strong> Otro problema con mi cuenta.</li>
-                        </ul>
-                        <p>Recuerda que en cualquier momento puedes escribir **"0"** para volver al menú principal. 🔙</p>
-                    `;
-                    break;
-                case '2':
-                    currentRequestType = 'new_account_request';
-                    conversationState = 'new_account_name';
-                    newAccountData = { fullName: '', email: '', phoneNumber: '' }; // Reiniciar datos
-                    response = '¡Excelente decisión! 🎉 Para ayudarte a iniciar tu proceso de registro en Llutid+, por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS NI ACENTOS**. Por ejemplo: **JUAN PEREZ GOMEZ**. Puedes escribir **0** para volver al menú anterior si lo necesitas.';
-                    break;
-                case '3':
-                    response = `
-                        <p>¡Llutid+ es tu destino definitivo para el entretenimiento digital! 🎬🎮</p>
-                        <p>Somos una **plataforma de streaming** que te ofrece una **amplia y emocionante variedad de películas, series y transmisiones en vivo**, desde los últimos estrenos hasta tus clásicos favoritos. Nuestro objetivo es brindarte una experiencia inigualable con **beneficios muy económicos**, ¡contamos con planes desde solo **2.500 COP** para una sola persona, y paquetes familiares muy convenientes!</p>
-                        <p>Nos enorgullece ser una plataforma **intuitiva, fácil de usar y altamente profesional**, siempre manteniéndote informado de todas las novedades y actualizaciones. Contamos con un **servicio de soporte dedicado y siempre disponible** para resolver cualquier duda y asegurarnos de que disfrutes de tu contenido sin interrupciones.</p>
-                        <p>¡Sumérgete en un mundo de entretenimiento sin límites con Llutid+ y descubre la diversión que te espera! ✨</p>
-                        <p>Si deseas explorar más, puedes visitar nuestra sección "<a href="${LLUTID_ABOUT_URL}" target="_blank">Quiénes Somos</a>" en nuestra página web, o escribe **"Menú"** o **"0"** para volver a las opciones principales.</p>
-                    `;
-                    break;
-                case '4':
-                    response = `
-                        <p>Has seleccionado **"Preguntas Frecuentes"** (FAQ). Aquí tienes algunas de las consultas más comunes que recibimos de nuestros usuarios: 🤔</p>
-                        <ul>
-                            <li><strong>1.</strong> ¿Qué tipo de contenido puedo encontrar en Llutid+?</li>
-                            <li><strong>2.</strong> ¿Cuáles son los planes de suscripción y precios disponibles?</li>
-                            <li><strong>3.</strong> ¿Cómo puedo contactar al equipo de soporte técnico de Llutid+?</li>
-                            <li><strong>4.</strong> ¿Cuál es el horario de atención al cliente?</li>
-                            <li><strong>5.</strong> ¿Llutid+ ofrece pruebas gratuitas o descuentos especiales?</li>
-                        </ul>
-                        <p>Por favor, escribe el **número de la pregunta** que te interesa para obtener una respuesta detallada, o el **0** para volver al menú principal. ↩️</p>
-                    `;
-                    conversationState = 'faq_section_expanded';
-                    break;
-                case '5':
-                    currentRequestType = 'support_feedback';
-                    conversationState = 'awaiting_user_feedback';
-                    response = `
-                        <p>En Llutid+, tu opinión es muy importante para nosotros y nos ayuda a mejorar. ¡Gracias por querer compartirla! 🙏</p>
-                        <p>Por favor, **describe tu problema, queja o sugerencia en un solo mensaje de texto**. Sé lo más claro y específico posible para que podamos entenderte perfectamente. Cuando termines de escribir, simplemente envíalo.</p>
-                        <p>Si cambias de opinión, puedes escribir **0** para volver al menú anterior.</p>
-                    `;
-                    break;
-                case '6':
-                    response = await getAdvisorAvailabilityMessage();
-                    break;
-                case '7':
-                    response = `
-                        <p>Comprendo tu solicitud de cancelación de cuenta. En Llutid+, la **seguridad y privacidad de tus datos** son nuestra prioridad máxima. Por esta razón, el proceso de cancelación de cuenta requiere una verificación directa y personalizada con nuestro equipo.</p>
-                        <p>Para asegurar que tu cuenta sea cancelada de manera segura y conforme a nuestros protocolos, por favor, contacta a nuestro equipo de soporte. Ellos te guiarán a través de los pasos necesarios.</p>
-                        <p>Estamos disponibles en:</p>
-                        <ul>
-                            <li><strong>Línea Telefónica de Soporte Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> (Horario de atención: Lunes a Sábado, 9 AM - 6 PM, Hora Colombia).</li>
-                            <li><strong>Correo Electrónico Oficial:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> (Responderemos en menos de 24 horas hábiles).</li>
-                        </ul>
-                        <p>Agradecemos tu comprensión y paciencia. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                    `;
-                    break;
-                case '8':
-                    response = `
-                        <p>¡Gracias por tu ayuda para mejorar Llutid+! 😊</p>
-                        <p>Si estás experimentando un **error técnico en la plataforma (bug)**, la forma más rápida de reportarlo a nuestro equipo técnico es a través de nuestro formulario especializado.</p>
-                        <p>Por favor, haz clic en el siguiente enlace y describe el problema detalladamente:</p>
-                        <p><a href="${LLUTID_BUG_REPORT_FORM}" target="_blank">**Formulario de Reporte de Errores Llutid+**</a></p>
-                        <p>Tu reporte pasará por una revisión y nuestro equipo técnico se encargará de corregirlo lo antes posible.</p>
-                        <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                    `;
-                    conversationState = 'initial_menu';
-                    break;
-                default:
-                    response = '¡Ups! Parece que no seleccionaste una opción válida. Por favor, elige un **número del 1 al 8** del menú principal. O si prefieres, escribe **"Menú"** o el **"0"** para que te muestre las opciones nuevamente. 😉';
-                    break;
-            }
-            return response;
-        }
-
-        async function handleSubMenu1Selection(userMessage) {
-            const normalizedMessage = userMessage.trim();
-            let response = '';
-
-            switch (normalizedMessage) {
-                case '1': // Se me olvidó la contraseña / PIN.
-                    currentRequestType = 'restablecimiento de contraseña/PIN';
-                    conversationState = 'awaiting_phone_number';
-                    response = 'Para ayudarte a restablecer tu contraseña o PIN, necesito verificar tu identidad. Por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal si lo deseas. 🔐';
-                    break;
-                case '2': // Quiero cambiar mi correo electrónico.
-                    currentRequestType = 'cambio de correo electrónico';
-                    conversationState = 'awaiting_full_name';
-                    response = 'Comprendo. Para proceder con el cambio de tu correo electrónico asociado a tu cuenta de Llutid+, necesito que me digas tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS, NI ACENTOS**, para que podamos verificar tu identidad. Ejemplo: **MARIA LOPEZ GARCIA**. Puedes escribir **0** para volver al menú principal. 📧';
-                    break;
-                case '3': // No puedo ingresar a mi cuenta / No funciona el login.
-                    currentRequestType = 'problema al iniciar sesión';
-                    response = `
-                        <p>Lamento mucho que estés teniendo problemas para iniciar sesión. 😟</p>
-                        <p>Antes de cualquier otra cosa, por favor, **cierra la aplicación y vuélvela a abrir, o recarga la página web**. A menudo, este simple paso soluciona problemas temporales de conexión y funcionamiento.</p>
-                        <p>Si el problema persiste después de intentarlo, por favor, selecciona una de las siguientes opciones para que podamos ayudarte:</p>
-                        <ul>
-                            <li><strong>1.</strong> **Chatear con un asesor:** Te pondremos en contacto directo con nuestro equipo por WhatsApp para que puedan revisar tu caso.</li>
-                            <li><strong>2.</strong> **Reportar un error técnico:** Si crees que es un problema de la plataforma (bug), puedes usar nuestro formulario de reporte para que el equipo técnico lo revise.</li>
-                        </ul>
-                        <p>Puedes escribir **"0"** para volver al menú principal en cualquier momento. ❌</p>
-                    `;
-                    conversationState = 'sub_menu_1_login_issue'; // Nuevo estado para manejar las opciones de este sub-menú
-                    break;
-                case '4': // Otro problema con mi cuenta.
-                    response = `
-                        <p>Para **otros problemas específicos relacionados con tu cuenta** que no se encuentran en las opciones anteriores, te recomendamos encarecidamente contactar directamente a nuestro equipo de soporte técnico. Ellos te proporcionarán una atención personalizada y eficiente para tu caso particular.</p>
-                        <p>Puedes comunicarte con nosotros a través de:</p>
-                        <ul>
-                            <li><strong>Línea Telefónica Llutid+:</strong> <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a></li>
-                            <li><strong>Correo Electrónico Oficial:</strong> <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a></li>
-                        </ul>
-                        <p>Estamos listos para asistirte. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                    `;
-                    conversationState = 'initial_menu'; // Vuelve al menú principal
-                    break;
-                default:
-                    response = '¡Vaya! Esa opción no es válida para esta sección. Por favor, selecciona un **número del 1 al 4**, o el **0** para volver al menú principal. 🤔';
-                    break;
-            }
-            return response;
-        }
-
-        // --- Nuevo estado para el problema de login ---
-        async function handleLoginIssueSelection(userMessage) {
-            const normalizedMessage = userMessage.trim();
-            let response = '';
-
-            switch (normalizedMessage) {
-                case '1':
-                    const whatsappMessage = `Hola Llutid+, no puedo iniciar sesión en mi cuenta. Ya intenté reiniciar la aplicación y el problema persiste. Por favor, ayúdenme.`;
-                    const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
-                    response = `
-                        <p>¡Entendido! Te hemos preparado un mensaje para que hables directamente con uno de nuestros asesores por WhatsApp y puedan ayudarte a resolver este problema lo antes posible.</p>
-                        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                            <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
-                                Chatear con Soporte de Llutid+
-                            </a>
-                        </div>
-                        <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                    `;
-                    conversationState = 'initial_menu';
-                    break;
-                case '2':
-                    response = `
-                        <p>¡Gracias por tu ayuda para mejorar Llutid+! 😊</p>
-                        <p>Por favor, haz clic en el siguiente enlace para acceder a nuestro formulario de reporte de errores y describe el problema detalladamente. Nuestro equipo técnico lo revisará y trabajará para corregirlo.</p>
-                        <p><a href="${LLUTID_BUG_REPORT_FORM}" target="_blank">**Formulario de Reporte de Errores Llutid+**</a></p>
-                        <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                    `;
-                    conversationState = 'initial_menu';
-                    break;
-                default:
-                    response = 'Opción no válida. Por favor, selecciona **1** o **2** para continuar, o **0** para volver al menú principal.';
-                    break;
-            }
-            return response;
-        }
-
-        // --- Flujo de Registro Llutid+ ---
-        async function handleNewAccountName(fullName) {
-            const cleanedFullName = fullName.toUpperCase().replace(/[^A-Z\s]/g, '').trim(); // Eliminar caracteres no alfabéticos y espacios extra
-            if (cleanedFullName.length < 5) {
-                return 'El nombre completo que ingresaste es demasiado corto o contiene caracteres no válidos. Por favor, ingresa tu **NOMBRE COMPLETO EN MAYÚSCULAS, SIN PUNTOS, COMAS NI ACENTOS** (mínimo 5 caracteres alfabéticos). Puedes escribir **0** para volver al menú anterior. 📝';
-            }
-            newAccountData.fullName = cleanedFullName;
-            conversationState = 'new_account_email';
-            return `¡Gracias, **${newAccountData.fullName}**! 👍 Ahora, por favor, ingresa el **correo electrónico válido** donde quieres recibir toda la información y notificaciones importantes de tu nueva cuenta Llutid+. Puedes escribir **0** para volver al menú anterior.`;
-        }
-
-        async function handleNewAccountEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                return 'El formato del correo electrónico que ingresaste no es válido. Por favor, asegúrate de escribir un correo electrónico real y correcto (ejemplo: tu_correo@dominio.com). Puedes escribir **0** para volver al menú anterior. 📧';
-            }
-            newAccountData.email = email;
-            conversationState = 'new_account_phone';
-            return `¡Excelente! Finalmente, ingresa tu **número de celular** (solo los 10 dígitos, sin espacios ni guiones) para completar la información inicial de tu registro. Este número será clave para cualquier comunicación. Puedes escribir **0** para volver al menú anterior. 📱`;
-        }
-
-        async function handleNewAccountPhone(phoneNumber) {
-            const cleanPhoneNumber = phoneNumber.replace(/\D/g, ''); // Remover no-dígitos
-            if (cleanPhoneNumber.length !== 10) { // Validación estricta de 10 dígitos para Colombia (ej: 3XX XXX XXXX)
-                return 'El número de celular no es válido. Por favor, ingresa un número de 10 dígitos (ejemplo: 3101234567). Puedes escribir **0** para volver al menú anterior. 📞';
-            }
-            newAccountData.phoneNumber = cleanPhoneNumber;
-
-            const whatsappMessage = `Hola Llutid+, soy ${newAccountData.fullName} y estoy muy interesado/a en crear una nueva cuenta. Mis datos de contacto son:%0A- Nombre Completo: ${newAccountData.fullName}%0A- Correo Electrónico: ${newAccountData.email}%0A- Número de Celular: ${newAccountData.phoneNumber}%0A%0APor favor, ayúdenme a iniciar el proceso de registro y a completar los pasos para activar mi cuenta. ¡Gracias!`;
-            const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
-
-            const response = `
-                <p>¡Muchas gracias por tu interés en Llutid+! 🎉 Hemos recopilado tus datos iniciales para el registro:</p>
+        case '4':
+            state = 'faq';
+            return `<p><strong>Preguntas Frecuentes</strong> 🤔</p>
                 <ul>
-                    <li><strong>Nombre Completo:</strong> ${newAccountData.fullName}</li>
-                    <li><strong>Correo Electrónico:</strong> ${newAccountData.email}</li>
-                    <li><strong>Número de Celular:</strong> ${newAccountData.phoneNumber}</li>
-                </ul>
-                <p>Para la creación segura y personalizada de tu cuenta, es necesario que un **asesor especializado te asista directamente**. Ellos verificarán tu información, resolverán cualquier duda adicional y te guiarán a través de los pasos finales para activar tu cuenta y empezar a disfrutar de todo el contenido de Llutid+.</p>
-                <p>Por favor, haz clic en el siguiente botón para **contactar a un asesor por WhatsApp** y completar tu registro de manera ágil y segura:</p>
-                <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                    <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
-                        Chatear con un Asesor de Llutid+
-                    </a>
-                </div>
-                <p>¡Estamos emocionados de darte la bienvenida a la familia Llutid+! 🚀</p>
-            `;
+                    <li><strong>1.</strong> ¿Qué contenido tiene Llutid+?</li>
+                    <li><strong>2.</strong> Planes y precios</li>
+                    <li><strong>3.</strong> ¿Cómo contacto soporte?</li>
+                    <li><strong>4.</strong> Horario de atención</li>
+                    <li><strong>5.</strong> ¿Hay periodo de prueba?</li>
+                </ul>`;
 
-            conversationState = 'initial_menu'; // Volver al menú principal
-            appendMessage(response, 'bot');
-            return ''; // No retornar nada aquí para evitar un mensaje duplicado
-        }
-        // --- Fin Flujo de Registro Llutid+ ---
+        case '5':
+            currentReqType = 'soporte/queja/sugerencia';
+            state          = 'awaiting_feedback';
+            return '¡Tu opinión es muy valiosa! 🙏<br>Cuéntame en un solo mensaje tu problema, queja o sugerencia y lo escalamos al equipo:';
 
-        async function handleFullName(fullName) {
-            const cleanedFullName = fullName.toUpperCase().replace(/[^A-Z\s]/g, '').trim();
-            currentUser = usersDB.find(user => user.fullName === cleanedFullName);
+        case '6':
+            currentReqType = 'consulta general';
+            openAdvisorModal();
+            return '';
 
-            if (currentUser) {
-                conversationState = 'awaiting_phone_number';
-                // *** MEJORA: Usar el nombre del usuario en la respuesta ***
-                return `¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia. Ahora, para confirmar tu identidad, por favor, ingresa tu **número de celular registrado** (solo los 10 dígitos, sin espacios ni guiones). Puedes escribir **0** para volver al menú principal si lo deseas.`;
-            } else {
-                conversationState = 'initial_menu';
-                currentUser = null;
-                currentRequestType = '';
-                generatedCode = '';
-                appendMessage('<p>Lo siento mucho, el nombre completo que ingresaste **no coincide con ninguno de nuestros registros activos**. 😟 Por favor, verifica que lo hayas escrito exactamente como lo registraste (todo en mayúsculas, sin caracteres especiales).</p><p>Si el problema persiste, por favor, selecciona otra opción del menú, o intenta nuevamente.</p>', 'bot');
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                await showMenu(true);
-                return '';
-            }
-        }
+        case '7':
+            currentReqType = 'cancelación de cuenta';
+            openAdvisorModal();
+            await delay(200);
+            return '🔐 Para cancelar tu cuenta debemos verificar tu identidad. Completa el acceso que apareció para continuar.';
 
-        async function handlePhoneNumber(phoneNumber) {
-            const cleanPhoneNumber = phoneNumber.replace(/\D/g, '');
-            currentUser = usersDB.find(user => user.phoneNumber === cleanPhoneNumber);
+        case '8':
+            return `<p>¡Gracias por ayudarnos a mejorar! 🛠️</p>
+                <p>Completa el formulario de reporte:<br>
+                <a href="${BUG_FORM}" target="_blank">📋 Formulario de errores Llutid+</a></p>`;
 
-            if (currentUser) {
-                generatedCode = generateRandomCode();
-                conversationState = 'awaiting_security_code';
+        case '9':
+            currentReqType = 'adquirir un plan';
+            openAdvisorModal();
+            await delay(200);
+            return '✨ Un asesor te guiará para elegir el plan ideal. Completa el acceso que apareció para iniciar.';
 
-                appendMessage(`¡Perfecto, **${currentUser.fullName}**! ✅ Hemos encontrado una coincidencia.`, 'bot');
-                await new Promise(resolve => setTimeout(resolve, 1200));
-                appendMessage(`Para el paso final de seguridad de tu solicitud de **${currentRequestType}**, te enviaré un código único de verificación.`, 'bot');
-                await new Promise(resolve => setTimeout(resolve, 1200));
+        default:
+            return 'Elige una opción del <strong>1 al 9</strong>, o escribe <strong>Menú</strong> para ver la lista. 😊';
+    }
+}
 
-                appendMessage(`Tu código de seguridad es:`, 'bot');
-                appendMessage(generatedCode, 'bot', 'code-display');
-                return `Por favor, ingresa este código **tal cual te lo mostré** para completar la verificación y avanzar con tu solicitud. Recuerda que puedes escribir **0** para volver al menú principal en cualquier momento.`;
-            } else {
-                conversationState = 'initial_menu';
-                currentUser = null;
-                currentRequestType = '';
-                generatedCode = '';
-                appendMessage('<p>El número de celular ingresado **no coincide** con el número registrado para este usuario. 🚫 **Acceso denegado.**</p><p>Por favor, revisa tus datos y selecciona otra opción del menú principal.</p>', 'bot');
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                await showMenu(true);
-                return '';
-            }
-        }
+/* ═══════════════════════════════════════════
+   SUBMENÚ 1 — PROBLEMAS DE CUENTA
+═══════════════════════════════════════════ */
+async function handleSubMenu1(msg) {
+    switch (msg.trim()) {
+        case '1':
+            currentReqType = 'recuperar contraseña o PIN';
+            state          = 'awaiting_phone';
+            return '🔐 Para verificar tu identidad necesito tu <strong>número de celular registrado</strong> (10 dígitos):';
 
-        async function handleSecurityCode(userCode) {
-            if (userCode === generatedCode) {
-                const whatsappMessage = `Hola Llutid+, soy ${currentUser.fullName} (celular: ${currentUser.phoneNumber}) y mi código de verificación (${generatedCode}) fue exitoso. Necesito ayuda con mi solicitud de ${currentRequestType}. Por favor, asístanme.`;
-                const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
+        case '2':
+            currentReqType = 'cambio de correo';
+            state          = 'awaiting_full_name';
+            return '📧 Ingresa tu <strong>nombre completo</strong> tal como lo registraste en Llutid+:';
 
-                const response = `
-                    <p>¡Verificación exitosa! ✅ Tu solicitud de **${currentRequestType}** ha sido validada de forma segura.</p>
-                    <p>Para tu seguridad y una atención completamente personalizada, te pondremos en contacto directo con uno de nuestros **asesores expertos** de Llutid+.</p>
-                    <p>Ellos tienen las herramientas y la información necesaria para resolver tu caso de forma eficiente, confidencial y asegurando la integridad de tu cuenta. ¡Están listos para ayudarte!</p>
-                    <p>Haz clic en el siguiente botón para **chatear directamente con un asesor por WhatsApp** y serás atendido de inmediato:</p>
-                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
-                            Chatear con un Asesor de Llutid+
-                        </a>
-                    </div>
-                    <p>Agradecemos tu paciencia y confianza. Si tienes otra consulta, no dudes en escribir **"Menú"** o el **"0"** para ver las opciones principales. ✨</p>
-                `;
-                conversationState = 'initial_menu'; // Volver al menú principal
-                appendMessage(response, 'bot');
-                return ''; // No retornar nada aquí para evitar un mensaje duplicado
-            } else {
-                return 'El código ingresado no es correcto. 😔 Por favor, intenta de nuevo o escribe **0** para volver al menú principal.';
-            }
-        }
+        case '3':
+            currentReqType = 'problema de inicio de sesión';
+            state          = 'login_issue';
+            return `<p>Primero intenta <strong>cerrar la app y volver a abrirla</strong>. Si el problema persiste, elige:</p>
+                <ul>
+                    <li><strong>1.</strong> Hablar con un asesor ahora</li>
+                    <li><strong>2.</strong> Reportar el error técnico</li>
+                </ul>`;
 
-        // --- Manejo de Preguntas Frecuentes (FAQ) ---
-        async function handleFAQSectionExpanded(userMessage) {
-            const normalizedMessage = userMessage.trim();
-            let response = '';
+        case '4':
+            currentReqType = 'otro problema';
+            openAdvisorModal();
+            state = 'initial_menu';
+            return '🔐 Para este caso te conectamos con un asesor. Completa el acceso que apareció.';
 
-            switch (normalizedMessage) {
-                case '1':
-                    response = `
-                        <p>En Llutid+, te ofrecemos un universo de entretenimiento: 🍿📺</p>
-                        <ul>
-                            <li>**Películas:** Una amplia biblioteca con los últimos estrenos y tus clásicos favoritos de diversos géneros.</li>
-                            <li>**Series:** Temporadas completas de las series del momento y producciones exclusivas para que hagas maratones sin parar.</li>
-                            <li>**Transmisiones en Vivo (Live Streaming):** Eventos especiales, conciertos, deportes y mucho más en tiempo real.</li>
-                        </ul>
-                        <p>Siempre estamos actualizando nuestro catálogo para ofrecerte lo mejor. ¡Explora y encuentra tu próximo favorito!</p>
-                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
-                        <p>***MEJORA: ¿Te gustaría saber sobre los precios y planes? Escribe **"2"** para ver los detalles.***</p>
-                    `;
-                    break;
-                case '2':
-                    response = `
-                        <p>¡Llutid+ se adapta a ti con planes muy económicos y flexibles! 💰</p>
-                        <p>Actualmente, tenemos una **promoción especial**. Puedes obtener el plan mensual por solo **2.500 COP** (antes 5.000 COP).</p>
-                        <ul>
-                            <li>**Planes de Suscripción:** Ofrecemos planes para perfiles individuales y paquetes familiares.</li>
-                            <li>**Facturación:** Se te enviará una factura electrónica por cada pago realizado.</li>
-                        </ul>
-                        <p>Para más información o para contratar un plan, te invitamos a visitar nuestra página oficial: <a href="${LLUTID_PLANS_URL}" target="_blank">Ver Planes y Precios de Llutid+</a>.</p>
-                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
-                        <p>***MEJORA: Si deseas iniciar el proceso de registro, escribe **"2"** en el menú principal.***</p>
-                    `;
-                    break;
-                case '3':
-                    response = `
-                        <p>¡Estamos aquí para ayudarte! Nuestro equipo de soporte técnico en Llutid+ está disponible a través de varios canales: 🧑‍💻</p>
-                        <ul>
-                            <li>**WhatsApp Directo:** Envíanos un mensaje rápido a través de <a href="https://wa.me/${LLUTID_WHATSAPP_PHONE}" target="_blank">nuestra línea de WhatsApp</a>.</li>
-                            <li>**Línea Telefónica:** Llámanos a nuestra línea de soporte principal: <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a>.</li>
-                            <li>**Correo Electrónico:** Envíanos un email detallado a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a>.</li>
-                            <li>**Sección de Ayuda en la Web:** Visita nuestra sección de ayuda en el sitio web para encontrar guías y soluciones: <a href="${LLUTID_HELP_URL}" target="_blank">Centro de Ayuda Llutid+</a>.</li>
-                        </ul>
-                        <p>¡Elige el canal que mejor se adapte a ti y con gusto te asistiremos!</p>
-                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
-                    `;
-                    break;
-                case '4':
-                    response = `
-                        <p>Nuestro horario de atención al cliente en Llutid+ es el siguiente: ⏰</p>
-                        <ul>
-                            <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia).</li>
-                            <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia).</li>
-                            <li>**Miércoles:** ¡Cerrado! Tomamos este día para mejorar nuestros servicios.</li>
-                            <li>**Domingos y Festivos:** Cerrado.</li>
-                        </ul>
-                        <p>Fuera de este horario, puedes dejarnos un mensaje por correo electrónico o WhatsApp, y te responderemos a primera hora del siguiente día hábil. ¡Gracias por tu comprensión!</p>
-                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
-                    `;
-                    break;
-                case '5':
-                    response = `
-                        <p>Actualmente, Llutid+ no ofrece pruebas gratuitas estándar. Sin embargo, tenemos una excelente noticia: ¡nuestros planes son tan económicos que puedes comenzar a disfrutar del entretenimiento desde solo **2.500 COP**!</p>
-                        <p>Ocasionalmente, lanzamos **promociones y descuentos especiales** para nuevos usuarios o en fechas específicas. Te recomendamos seguirnos en nuestras redes sociales y estar atento a nuestra página web para no perderte ninguna oferta. ¡Siempre hay algo emocionante esperándote! ✨</p>
-                        <p>Puedes escribir otro número de pregunta frecuente, o **0** para volver al menú principal. ↩️</p>
-                        <p>***MEJORA: ¿Te gustaría ver nuestros planes de suscripción para ver lo económicos que son? Escribe **"2"** para ver los detalles.***</p>
-                    `;
-                    break;
-                default:
-                    response = 'Lo siento, esa no es una pregunta frecuente válida. Por favor, selecciona un **número del 1 al 5** para ver la información, o escribe **0** para volver al menú principal. 🤔';
-                    break;
-            }
-            return response;
+        default:
+            return 'Selecciona del <strong>1 al 4</strong> o escribe <strong>0</strong> para volver.';
+    }
+}
+
+async function handleLoginIssue(msg) {
+    switch (msg.trim()) {
+        case '1':
+            openAdvisorModal();
+            state = 'initial_menu';
+            return '🔐 Te conectamos con un asesor. Completa el acceso que apareció.';
+        case '2':
+            state = 'initial_menu';
+            return `<a href="${BUG_FORM}" target="_blank">📋 Formulario de reporte de errores</a>`;
+        default:
+            return 'Selecciona <strong>1</strong> o <strong>2</strong>.';
+    }
+}
+
+/* ═══════════════════════════════════════════
+   VERIFICACIÓN INTERNA (flujo nombre → tel → código)
+═══════════════════════════════════════════ */
+async function handleFullName(raw) {
+    // Convertimos automáticamente a mayúsculas — el usuario no tiene que hacerlo
+    const clean = raw.toUpperCase().replace(/[^A-ZÁÉÍÓÚÜÑ\s]/g, '').trim();
+    if (clean.length < 4) return 'El nombre parece muy corto. ¿Puedes escribirlo completo?';
+
+    try {
+        let snap = await getDocs(query(collection(db,'usuarios'), where('nombre','==',clean)));
+        if (snap.empty) snap = await getDocs(query(collection(db,'usuarios'), where('fullName','==',clean)));
+
+        if (!snap.empty) {
+            currentUser = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            state       = 'awaiting_phone';
+            return `✅ Encontramos tu cuenta, <strong>${getUserName(currentUser)}</strong>.<br>Ahora ingresa tu <strong>número celular registrado</strong>:`;
         }
 
-        // --- Flujo de Soporte y Quejas ---
-        async function handleUserFeedbackInput(feedbackMessage) {
-            userFeedback = feedbackMessage.trim();
-            if (userFeedback.length < 10) { // Pequeña validación para evitar mensajes vacíos
-                return 'Tu mensaje parece demasiado corto. Por favor, describe tu problema o sugerencia con más detalle para que podamos ayudarte mejor. Si deseas volver al menú anterior, escribe **0**.';
-            }
-            conversationState = 'confirm_send_feedback';
-            return `¡Gracias por tu valioso mensaje! Lo hemos recibido: "${userFeedback}".\n\n¿Estás seguro/a de que deseas enviar esta información a nuestro equipo de soporte? Por favor, responde **"Sí"** para confirmar o **"No"** para cancelarlo y volver a empezar. Puedes escribir **0** para volver al menú principal.`;
+        // No encontrado
+        state = 'initial_menu';
+        addMsg('No encontré ese nombre en nuestros registros. 😟 Verifica que sea tal como lo registraste.', 'bot');
+        await delay(900);
+        await showMenu(true);
+        return '';
+    } catch(e) {
+        state = 'initial_menu';
+        addMsg('Ocurrió un error al buscar tu información. Intenta de nuevo.', 'bot');
+        await delay(900);
+        await showMenu(true);
+        return '';
+    }
+}
+
+async function handlePhone(raw) {
+    const clean = raw.replace(/\D/g,'');
+    if (clean.length < 7) return 'Ingresa un número de celular válido (mínimo 7 dígitos).';
+
+    try {
+        let snap = await getDocs(query(collection(db,'usuarios'), where('telefono','==',clean)));
+        if (snap.empty) snap = await getDocs(query(collection(db,'usuarios'), where('phoneNumber','==',clean)));
+
+        if (!snap.empty) {
+            currentUser    = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            generatedCode  = genCode();
+            state          = 'awaiting_code';
+            addMsg(`✅ ¡Perfecto, <strong>${getUserName(currentUser)}</strong>! Te generamos un código de verificación:`, 'bot');
+            await delay(600);
+            addMsg(generatedCode, 'bot', 'code');
+            return 'Ingresa ese código <strong>exactamente como aparece</strong> para completar la verificación:';
         }
 
-        async function handleConfirmSendFeedback(confirmation) {
-            const normalizedConfirmation = confirmation.toLowerCase();
-            let response = '';
+        state = 'initial_menu';
+        addMsg('❌ El número no coincide con nuestros registros.', 'bot');
+        await delay(900);
+        await showMenu(true);
+        return '';
+    } catch(e) {
+        state = 'initial_menu';
+        addMsg('Error al buscar tu información. Intenta de nuevo.', 'bot');
+        await delay(900);
+        await showMenu(true);
+        return '';
+    }
+}
 
-            if (normalizedConfirmation === 'si' || normalizedConfirmation === 'sí') {
-                const whatsappMessage = `Hola Llutid+, tengo un problema/queja/sugerencia que quiero reportar:%0A%0A"${userFeedback}"%0A%0APor favor, ayúdenme con esto.`;
-                const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappMessage)}`;
+async function handleCode(raw) {
+    if (raw.trim() === generatedCode) {
+        state = 'initial_menu';
+        addMsg(`✅ <strong>¡Verificación exitosa!</strong> Conectando con un asesor para tu solicitud de <em>${currentReqType}</em>…`, 'bot');
+        await delay(600);
+        await startLiveChat(currentUser);
+        return '';
+    }
+    return 'Código incorrecto 😔. Inténtalo de nuevo o escribe <strong>0</strong> para volver al menú.';
+}
 
-                response = `
-                    <p>¡Excelente! Hemos registrado tu mensaje y te agradecemos por compartirlo. Tu opinión es fundamental para nosotros. 🙏</p>
-                    <p>Para asegurarnos de que tu problema, queja o sugerencia sea atendido de la manera más eficaz y que podamos recopilar cualquier detalle adicional si es necesario, te invitamos a **contactar directamente con un asesor de soporte a través de WhatsApp**.</p>
-                    <p>Esto nos permitirá dar seguimiento a tu caso de forma personalizada y ofrecerte la mejor solución.</p>
-                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
-                            Chatear con Soporte de Llutid+
-                        </a>
-                    </div>
-                    <p>Agradecemos tu paciencia y cooperación. ¡Estamos aquí para escucharte y resolverlo!</p>
-                `;
-                userFeedback = ''; // Limpiar el feedback
-                conversationState = 'initial_menu'; // Volver al menú principal
-                appendMessage(response, 'bot');
-                return ''; // No retornar nada aquí
-            } else if (normalizedConfirmation === 'no') {
-                userFeedback = ''; // Limpiar el feedback
-                conversationState = 'initial_menu'; // Volver al menú principal
-                response = 'Entendido. Tu mensaje no ha sido enviado. ¿Hay algo más en lo que pueda ayudarte? Escribe **"Menú"** o el **"0"** para ver las opciones.';
-            } else {
-                return 'Lo siento, no entendí tu respuesta. Por favor, responde **"Sí"** para confirmar o **"No"** para cancelar. Puedes escribir **0** para volver al menú principal.';
-            }
-            return response;
-        }
+/* ═══════════════════════════════════════════
+   NUEVA CUENTA
+═══════════════════════════════════════════ */
+async function handleNewName(raw) {
+    // Auto-uppercase: el usuario escribe como quiera
+    const clean = raw.toUpperCase().replace(/[^A-ZÁÉÍÓÚÜÑ\s]/g, '').trim();
+    if (clean.length < 4) return '¿Puedes escribir tu nombre completo? Parece muy corto.';
+    newAccData.nombre = clean;
+    state = 'new_account_email';
+    return `¡Gracias, <strong>${clean}</strong>! 👍<br>¿Cuál es tu <strong>correo electrónico</strong>?`;
+}
 
-        // --- Función para verificar la disponibilidad del asesor (simulada) ---
-        async function getAdvisorAvailabilityMessage() {
-            const now = new Date();
-            const day = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-            const hour = now.getHours(); // 0-23
+async function handleNewEmail(raw) {
+    const email = raw.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return 'Ese correo no parece válido. Escríbelo así: <strong>tu@correo.com</strong>';
+    }
+    newAccData.email = email;
+    state = 'new_account_phone';
+    return 'Perfecto 📧 Por último, ¿cuál es tu <strong>número de celular</strong> (10 dígitos)?';
+}
 
-            let message = '';
-            const whatsappLink = `https://wa.me/${LLUTID_WHATSAPP_PHONE}`;
+async function handleNewPhone(raw) {
+    const clean = raw.replace(/\D/g,'');
+    if (clean.length !== 10) return 'El número debe tener <strong>10 dígitos</strong> (ej: 3101234567). ¿Lo intentas de nuevo?';
 
-            // Horario de atención: Lunes a Viernes 9 AM - 6 PM, Sábados 9 AM - 1 PM
-            const isWeekday = day >= 1 && day <= 5; // Lunes a Viernes
-            const isSaturday = day === 6;
-            const isWednesday = day === 3; // Miércoles
+    newAccData.telefono = clean;
+    state = 'initial_menu';
 
-            const isDuringWeekdayHours = hour >= 9 && hour < 18; // 9 AM a 5:59 PM
-            const isDuringSaturdayHours = hour >= 9 && hour < 13; // 9 AM a 12:59 PM
+    // Crear sesión con TODOS los datos del usuario nuevo para que el asesor los vea
+    const sessionRef = await addDoc(collection(db, 'sesiones_asesor'), {
+        nombre:        newAccData.nombre,
+        email:         newAccData.email,
+        telefono:      newAccData.telefono,
+        estado:        'esperando',
+        timestamp:     serverTimestamp(),
+        mensajes:      [],
+        tipoSolicitud: 'nueva cuenta',
+        ultimaConexion: serverTimestamp(),
+        // resumen visible en el panel admin
+        resumenDatos:  `Nombre: ${newAccData.nombre} | Email: ${newAccData.email} | Tel: ${newAccData.telefono}`
+    });
 
-            if (isWednesday) {
-                message = `
-                    <p>¡Hola! Has seleccionado hablar con un asesor. Te informamos que hoy, **miércoles, nuestro equipo de soporte está cerrado** por mantenimiento y mejoras. 🛠️</p>
-                    <p>Puedes contactarnos durante nuestro horario habitual para recibir asistencia en vivo: **Lunes, Martes, Jueves y Viernes** de **9:00 AM a 6:00 PM**, y **Sábados** de **9:00 AM a 1:00 PM**.</p>
-                    <p>Si tu consulta es urgente, puedes dejarnos un mensaje por correo electrónico a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> o un mensaje por WhatsApp a nuestra línea principal, y te responderemos a la brevedad posible.</p>
-                    <p>Gracias por tu comprensión. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                `;
-            } else if ((isWeekday && isDuringWeekdayHours) || (isSaturday && isDuringSaturdayHours)) {
-                // Dentro del horario de atención
-                message = `
-                    <p>¡Excelente! Has seleccionado hablar con un asesor de Llutid+. 🧑‍💼</p>
-                    <p>Nuestro equipo está disponible **en este momento** para asistirte de forma personalizada. Ellos podrán ayudarte con cualquier consulta o problema que tengas.</p>
-                    <p>Para tu comodidad, te recomendamos chatear con ellos directamente por WhatsApp. Haz clic en el siguiente botón para iniciar la conversación:</p>
-                    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
-                            Chatear con un Asesor de Llutid+ Ahora
-                        </a>
-                    </div>
-                    <p>También puedes llamarnos al <a href="tel:${LLUTID_SUPPORT_PHONE}">${LLUTID_SUPPORT_PHONE}</a> o escribirnos a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a>.</p>
-                    <p>Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                `;
-            } else {
-                // Fuera del horario de atención
-                message = `
-                    <p>Has seleccionado hablar con un asesor. Actualmente, estamos **fuera de nuestro horario de atención**. 😴</p>
-                    <p>Nuestro equipo de soporte está disponible en los siguientes horarios:</p>
-                    <ul>
-                        <li>**Lunes a Viernes:** De **9:00 AM a 6:00 PM** (Hora de Colombia), **excepto los miércoles**.</li>
-                        <li>**Sábados:** De **9:00 AM a 1:00 PM** (Hora de Colombia).</li>
-                        <li>**Domingos y Festivos:** Cerrado.</li>
-                    </ul>
-                    <p>Te invitamos a contactarnos durante nuestro horario de atención para recibir asistencia en vivo. Si tu consulta es urgente o prefieres dejar un mensaje, puedes enviarnos un correo electrónico a <a href="mailto:${LLUTID_SUPPORT_EMAIL}">${LLUTID_SUPPORT_EMAIL}</a> o un mensaje por WhatsApp a nuestra línea principal: <a href="https://wa.me/${LLUTID_WHATSAPP_PHONE}" target="_blank">${LLUTID_WHATSAPP_PHONE}</a>, y te responderemos a la brevedad posible en nuestro próximo horario hábil.</p>
-                    <p>Gracias por tu comprensión. Si deseas volver al menú principal, escribe **"Menú"** o el **"0"**.</p>
-                `;
-            }
-            conversationState = 'initial_menu'; // Vuelve al menú principal después de dar la info
-            return message;
-        }
+    liveSessionId = sessionRef.id;
+    isLiveChat    = true;
+    liveConnected = false;
+    liveEnded     = false;
 
-        // Mostrar el mensaje de bienvenida al cargar la página
-        displayInitialWelcomeMessage();
-    </script>
+    // Mostrar resumen al usuario
+    const card = document.createElement('div');
+    card.className = 'data-card';
+    card.innerHTML = `
+        <div class="data-title">📋 Datos enviados al asesor</div>
+        <div class="data-row"><span class="data-label">Nombre:</span><span class="data-val">${newAccData.nombre}</span></div>
+        <div class="data-row"><span class="data-label">Correo:</span><span class="data-val">${newAccData.email}</span></div>
+        <div class="data-row"><span class="data-label">Celular:</span><span class="data-val">${newAccData.telefono}</span></div>
+    `;
+    // Insertar como burbuja bot
+    const row = document.createElement('div');
+    row.className = 'msg-row bot-row';
+    const icon = document.createElement('div');
+    icon.className = 'bot-icon';
+    icon.textContent = '🤖';
+    row.appendChild(icon);
+    row.appendChild(card);
+    chatBox.appendChild(row);
+    scrollEnd();
+
+    await delay(500);
+
+    // Spinner de espera
+    const waitDiv     = document.createElement('div');
+    waitDiv.className = 'advisor-waiting';
+    waitDiv.id        = 'waitDiv';
+    waitDiv.innerHTML = `
+        <div class="spinner"></div>
+        <p style="color:var(--text-muted);font-size:0.83rem;margin-bottom:4px;">
+            Conectando con un asesor para activar tu cuenta…
+        </p>
+        <span style="font-size:0.74rem;opacity:0.6;">Tiempo estimado: menos de 5 minutos</span>
+    `;
+    chatBox.appendChild(waitDiv);
+    scrollEnd();
+
+    listenLiveChat();
+    return '';
+}
+
+/* ═══════════════════════════════════════════
+   FAQ
+═══════════════════════════════════════════ */
+async function handleFAQ(msg) {
+    switch (msg.trim()) {
+        case '1': return `<p>🎬 <strong>Contenido en Llutid+</strong></p>
+            <ul>
+                <li>Películas de todos los géneros y estrenos recientes</li>
+                <li>Series completas en alta calidad</li>
+                <li>Transmisiones en vivo — deportes, eventos, música</li>
+            </ul>`;
+
+        case '2': return `<p>💰 <strong>Planes desde $2.500 COP/mes</strong></p>
+            <p>Tenemos opciones individuales y familiares.</p>
+            <a href="${LLUTID_PLANS}" target="_blank">Ver todos los planes →</a>`;
+
+        case '3': return `<p>🧑‍💻 <strong>Canales de soporte</strong></p>
+            <ul>
+                <li>Chat con asesor — opción <strong>6</strong> del menú</li>
+                <li>Email: <a href="mailto:${LLUTID_EMAIL}">${LLUTID_EMAIL}</a></li>
+            </ul>`;
+
+        case '4': return `<p>⏰ <strong>Horario de atención</strong></p>
+            <ul>
+                <li>Lun, Mar, Jue, Vie: 9AM – 6PM</li>
+                <li>Sábados: 9AM – 1PM</li>
+                <li>Miércoles, Domingos y festivos: Cerrado</li>
+            </ul>`;
+
+        case '5': return `<p>🎁 <strong>¿Periodo de prueba?</strong></p>
+            <p>No tenemos trial, ¡pero nuestros planes arrancan desde $2.500! Sigue nuestras redes para promociones 🎉</p>`;
+
+        default: return 'Selecciona del <strong>1 al 5</strong>, o escribe <strong>0</strong> para volver al menú.';
+    }
+}
+
+/* ═══════════════════════════════════════════
+   FEEDBACK / SOPORTE
+═══════════════════════════════════════════ */
+async function handleFeedback(msg) {
+    if (msg.trim().length < 10) return 'Tu mensaje es muy corto. Cuéntame más para poder ayudarte mejor.';
+    userFeedback = msg.trim();
+    state = 'confirm_feedback';
+    return `Recibí: <em>"${userFeedback}"</em><br><br>
+        ¿Confirmas enviar esto al equipo de soporte?<br>
+        Responde <strong>Sí</strong> o <strong>No</strong>`;
+}
+
+async function handleConfirmFeedback(msg) {
+    const n = msg.toLowerCase().trim();
+
+    if (n === 'si' || n === 'sí') {
+        await addDoc(collection(db, 'sesiones_asesor'), {
+            nombre:        'Reporte anónimo',
+            email:         '',
+            estado:        'esperando',
+            timestamp:     serverTimestamp(),
+            mensajes:      [{ id: Date.now().toString(), de:'usuario', texto:`[SOPORTE/QUEJA] ${userFeedback}`, hora: new Date().toISOString() }],
+            tipoSolicitud: 'soporte/queja/sugerencia',
+            ultimaConexion: serverTimestamp()
+        });
+        userFeedback = '';
+        state = 'initial_menu';
+        addMsg('✅ ¡Mensaje enviado! Gracias por tu reporte 🙏 El equipo lo revisará.', 'bot');
+        return '';
+    }
+
+    if (n === 'no') {
+        userFeedback = '';
+        state = 'initial_menu';
+        return 'Entendido, mensaje cancelado. Escribe <strong>Menú</strong> si necesitas algo más.';
+    }
+
+    return 'Responde <strong>Sí</strong> para confirmar o <strong>No</strong> para cancelar.';
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+(async () => {
+    await delay(400);
+    addMsg(`¡${greeting()}! 👋 Soy <strong>Cebrid</strong>, tu asistente virtual de <strong>Llutid+</strong>.`, 'bot');
+    await delay(900);
+    addMsg('Estoy aquí para ayudarte con cualquier consulta. ¿En qué puedo ayudarte hoy?', 'bot');
+    await delay(500);
+    addQuickReplies([
+        {label:'Ver opciones 📋',  value:'menu'},
+        {label:'Ver novedades 📰', value:'novedades'},
+        {label:'Hablar asesor 💬', value:'6'},
+    ]);
+    state = 'awaiting_greeting';
+})();
+
+</script>
 </body>
 </html>
