@@ -1168,7 +1168,7 @@ function listenLiveChat() {
             liveConnected = true;
             document.getElementById('waitDiv')?.remove();
 
-            // Nombre del asesor (el admin debe guardar este campo al aceptar)
+            // Nombre del asesor (el admin guarda este campo al aceptar)
             const advisorName = data.nombreAsesor || 'Asesor';
 
             // Banner de conexión
@@ -1183,11 +1183,8 @@ function listenLiveChat() {
             // Actualizar header
             setHeaderLive(advisorName);
 
-            // Saludo del asesor
-            addMsg(
-                `👋 ¡Hola! Soy <strong>${advisorName}</strong>, asesor de Llutid+. ¿En qué te puedo ayudar hoy?`,
-                'bot'
-            );
+            // NO agregar saludo aquí — el asesor ya envió uno desde el panel admin (acceptSession)
+            // Los mensajes del asesor llegan por el bloque de "Nuevos mensajes del asesor" abajo
         }
 
         /* ── El asesor finalizó el chat desde el panel admin ── */
@@ -1201,9 +1198,9 @@ function listenLiveChat() {
                 [...chatBox.querySelectorAll('[data-msg-id]')].map(el => el.dataset.msgId)
             );
             data.mensajes.forEach(msg => {
-                if (msg.de === 'asesor' && !rendered.has(msg.id)) {
+                if (msg.de === 'asesor' && msg.id && !rendered.has(msg.id)) {
                     const bubble = addMsg(msg.texto, 'bot');
-                    bubble.parentElement.dataset.msgId = msg.id;
+                    if (bubble) bubble.dataset.msgId = msg.id;
                 }
             });
         }
